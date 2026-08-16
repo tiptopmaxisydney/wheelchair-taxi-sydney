@@ -24,6 +24,9 @@ export default function ServiceHero({ eyebrow, title, description, breadcrumbLab
             <a href={`tel:${siteConfig.phoneIntl}`} className="wt-btn wt-btn-primary">
               <FaPhoneAlt aria-hidden="true" /> Call Us
             </a>
+            <a href="/#tiptop-booking-form" className="wt-btn wt-btn-outline-inverted">
+              Book Now
+            </a>
             <a href="/#wcb-booking-form" className="wt-btn wt-btn-outline-inverted">
               Get a Quote
             </a>

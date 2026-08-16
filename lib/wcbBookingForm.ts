@@ -414,7 +414,12 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
       warn("Address autocomplete is off because no Google Places API key is configured.");
       return;
     }
-    const existing = document.querySelector('script[data-wcb-google-maps]');
+    // Shared with booking-widget/utils/CommonFunctions.ts's loadGoogleMapScript —
+    // both this widget and the Tiptop booking widget can be mounted on the same
+    // page (see Hero.tsx), and the Maps JS API breaks if it's loaded twice via
+    // separate <script> tags. Matching on the same id lets whichever loader runs
+    // first "win" and the other just waits for its load event.
+    const existing = document.getElementById("wt-google-maps-script");
     if (existing) {
       existing.addEventListener("load", initAutocomplete);
       return;
@@ -428,10 +433,10 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
     }
     window.wcbGoogleMapsReady = initAutocomplete;
     const script = document.createElement("script");
+    script.id = "wt-google-maps-script";
     script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(apiKey) + "&libraries=places&loading=async&callback=wcbGoogleMapsReady";
     script.async = true;
     script.defer = true;
-    script.setAttribute("data-wcb-google-maps", "1");
     script.onerror = () => warn("Could not download the Google Maps JavaScript API. A network block, ad blocker or content-security-policy rule is the usual cause.");
     document.head.appendChild(script);
   }

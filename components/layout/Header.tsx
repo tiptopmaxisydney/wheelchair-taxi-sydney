@@ -88,8 +88,11 @@ export default function Header() {
           </nav>
 
           <div className="wt-nav-actions">
-            <a href="#wcb-booking-form" className="wt-btn wt-btn-primary" onClick={closeMenu}>
+            <a href="/#tiptop-booking-form" className="wt-btn wt-btn-primary" onClick={closeMenu}>
               Book Now
+            </a>
+            <a href="/#wcb-booking-form" className="wt-btn wt-btn-outline" onClick={closeMenu}>
+              Quote
             </a>
             <button
               className="wt-menu-toggle"

@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   trailingSlash: true,
+  // superagent (used by booking-widget/utils/api.ts, ported from tiptopnextjs) pulls in
+  // formidable for its Node build, which uses a dynamic require() Turbopack can't bundle
+  // for the "use client" component's SSR pass. Treat it as an external runtime require.
+  serverExternalPackages: ["superagent", "superagent-promise", "formidable"],
   images: {
     minimumCacheTTL: 31536000,
     qualities: [65, 75],

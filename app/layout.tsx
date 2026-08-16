@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Lato, Inter } from "next/font/google";
 import Script from "next/script";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "./globals.css";
+import "@/booking-widget/booking-widget.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import StickyCta from "@/components/layout/StickyCta";
@@ -26,6 +28,11 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  icons: {
+    icon: "/images/cropped-wheelchair-taxi-sydney-airport--270x270.png",
+    shortcut: "/images/cropped-wheelchair-taxi-sydney-airport--270x270.png",
+    apple: "/images/cropped-wheelchair-taxi-sydney-airport--270x270.png",
+  },
   keywords: [
     "wheelchair taxi sydney",
     "wheelchair accessible taxi",
@@ -109,10 +116,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body id="top">
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <StickyCta />
+        <AntdRegistry>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <StickyCta />
+        </AntdRegistry>
 
         {siteConfig.googleAdsId && (
           <>

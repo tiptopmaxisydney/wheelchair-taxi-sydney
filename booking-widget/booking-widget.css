@@ -1,0 +1,129 @@
+/* Tailwind utility layer for the ported Tiptop booking widget only — preflight/reset is
+   disabled in tailwind.config.js so this has no effect on the rest of the site's CSS. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Preflight normally zeroes border-width, sets border-style: solid, and strips native
+   background/border chrome off <button>, so Tailwind's border and bg utilities are the
+   only thing styling plain elements. With preflight disabled: (1) elements keep the
+   browser's initial border-width (~medium, a few px) merely hidden by border-style: none,
+   so `border` utilities were invisible until something set style:solid; (2) plain
+   <button>s (e.g. "Add a stop") kept the browser's native button background/border chrome.
+   Scoped to .create-booking, excluding antd-rendered elements ([class*="ant-"]) so antd's
+   own CSS-in-JS styling (Radio.Button borders, antd Button backgrounds, etc.) is left
+   untouched. Everything is wrapped in :where(), which always contributes zero specificity
+   — this rule must never be able to outrank a real Tailwind utility class (.border,
+   .bg-*, ...) regardless of source order, or it cancels the very thing it's meant to
+   let show through. (@layer doesn't help here: this build doesn't preserve it — verified
+   there are zero CSSLayerBlockRule/CSSLayerStatementRule entries in the compiled output
+   — so layer order can't be relied on; :where() is the only mechanism that works
+   independent of the build pipeline.) */
+:where(.create-booking) :where(:not([class*="ant-"])) {
+  border-width: 0;
+  border-style: solid;
+}
+:where(.create-booking) :where(:not([class*="ant-"]))::before,
+:where(.create-booking) :where(:not([class*="ant-"]))::after {
+  border-width: 0;
+  border-style: solid;
+}
+
+:where(.create-booking) :where(button:not([class*="ant-"])) {
+  background-color: transparent;
+  background-image: none;
+}
+
+/* Flattened equivalents of the non-Tailwind rules tiptopnextjs's src/styles/globals.scss
+   applies to this same form (.create-booking, .phone_input_detail, .typing-indicator).
+   Flattened rather than nested because this project has no Sass compiler configured. */
+.create-booking .ant-input-group-addon {
+  padding: 10px !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+.create-booking .ant-input {
+  border: none !important;
+  box-shadow: none !important;
+}
+.create-booking input,
+.create-booking select,
+.create-booking .ant-picker,
+.create-booking .ant-select-selector {
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+}
+.create-booking input::placeholder,
+.create-booking select::placeholder,
+.create-booking .ant-picker::placeholder,
+.create-booking .ant-select-selector::placeholder {
+  color: #999999;
+}
+.create-booking .ant-form-item-control-input-content {
+  display: flex;
+  align-items: center;
+}
+
+.input-placeholder ::placeholder {
+  color: gray !important;
+}
+
+.phone_input_detail .ant-input {
+  background: transparent !important;
+}
+.phone_input_detail .ant-input-group-addon {
+  background: transparent !important;
+}
+.phone_input_detail .ant-form-item {
+  border: none !important;
+  outline: none !important;
+  margin-bottom: 0 !important;
+}
+.phone_input_detail .number-outlined {
+  border: none !important;
+  outline: none !important;
+  outline-offset: 0 !important;
+  border-color: transparent !important;
+}
+.phone_input_detail .number-selector {
+  border: none !important;
+}
+.phone_input_detail .ant-input-group-addon,
+.phone_input_detail .ant-input-group > input.ant-input {
+  vertical-align: middle !important;
+}
+
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  padding: 20px 16px;
+  background: #f2f4f8ea;
+  border-radius: 20px;
+}
+.typing-indicator span {
+  height: 8px;
+  width: 8px;
+  margin: 0 2px;
+  background-color: #9ca3af;
+  border-radius: 50%;
+  display: inline-block;
+  animation: wt-booking-bounce 1.3s linear infinite;
+}
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes wt-booking-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}

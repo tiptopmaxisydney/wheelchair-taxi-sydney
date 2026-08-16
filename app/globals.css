@@ -180,6 +180,16 @@ img {
   top: 0;
   z-index: 50;
 }
+
+/* Anchor-scroll targets for the header/sticky-CTA Book Now + Quote links.
+   .wt-header is position:sticky, so a plain scroll-to-element lands the
+   target's top edge at viewport y:0 and the header then renders over it,
+   clipping the top of the form. scroll-margin-top reserves that space for
+   both native href="#id" navigation and JS scrollIntoView() calls. */
+#tiptop-booking-form,
+#wcb-booking-form {
+  scroll-margin-top: 96px;
+}
 .wt-header-inner {
   position: relative;
   max-width: 1220px;
@@ -293,7 +303,12 @@ img {
 }
 .wt-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, 460px);
+  /* minmax(0, ...) not plain 1fr — a bare grid track floors at its content's
+     min-content width (the booking widget's step indicator relies on its own
+     overflow-x-auto to scroll instead of wrapping), so without the explicit
+     0 floor here the whole page gets pushed wider than the viewport on
+     narrow screens instead of the step indicator scrolling internally. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 40px;
   align-items: center;
 }
@@ -314,10 +329,25 @@ img {
 .wt-hero p {
   color: #555;
   font-size: 1.05rem;
-  max-width: 560px;
+  max-width: 640px;
+  margin-top: 10px;
 }
 .wt-hero-actions {
   margin-top: 24px;
+}
+.wt-hero-live-booking {
+  margin-top: 48px;
+  padding-top: 40px;
+  border-top: 1px solid var(--wt-border);
+}
+.wt-hero-live-booking h2 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+.wt-hero-live-booking > p {
+  color: #555;
+  max-width: 640px;
+  margin-bottom: 20px;
 }
 
 /* Inner page hero */
@@ -752,7 +782,6 @@ img {
     gap: 16px;
   }
   .wt-menu-toggle { display: block; }
-  .wt-hero-grid { grid-template-columns: 1fr; }
   .wt-split { grid-template-columns: 1fr; gap: 28px; }
   .wt-split.reverse .wt-split-media { order: 0; }
   .wt-grid-3 { grid-template-columns: 1fr; }
