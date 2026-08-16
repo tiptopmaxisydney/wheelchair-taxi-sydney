@@ -7,6 +7,8 @@ import { blogPosts } from "@/lib/blogPosts";
 export const metadata: Metadata = {
   title: "Blog | Wheelchair Taxi Sydney",
   description: "News, guides and helpful information about wheelchair accessible transport, NDIS travel and aged care transfers in Sydney.",
+  keywords: ["wheelchair taxi sydney blog", "NDIS transport guides", "accessible transport news"],
+  alternates: { canonical: "/blog/" },
 };
 
 export default function BlogPage() {
@@ -21,6 +23,7 @@ export default function BlogPage() {
 
       <section className="wt-section">
         <div className="container">
+          <h2 className="wt-visually-hidden">Latest Articles</h2>
           <div className="wt-blog-grid">
             {blogPosts.map((post) => (
               <Link href={`/${post.slug}/`} key={post.slug} className="wt-blog-card">

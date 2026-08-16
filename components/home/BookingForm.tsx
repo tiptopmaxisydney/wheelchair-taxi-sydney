@@ -27,7 +27,7 @@ export default function BookingForm() {
   return (
     <div className="wcb-booking-widget">
       <div className="wcb-form-hero">
-        <h3>Get a wheelchair taxi quote</h3>
+        <h2>Get a wheelchair taxi quote</h2>
         <p>Airport transfers, hospital visits and local trips covered.</p>
       </div>
 

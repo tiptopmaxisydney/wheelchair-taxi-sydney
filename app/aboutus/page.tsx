@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: "About Us | Wheelchair Taxi Sydney",
   description:
     "Learn about Wheelchair Taxi Sydney, our approach to accessible transport, and how we support passengers, families and organisations across Sydney.",
+  keywords: ["about wheelchair taxi sydney", "accessible transport provider sydney", "wheelchair taxi company"],
+  alternates: { canonical: "/aboutus/" },
 };
 
 export default function AboutUsPage() {

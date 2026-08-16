@@ -66,7 +66,7 @@ export default function Header() {
                 <div className="wt-mega">
                   {servicesMenu.map((group) => (
                     <div className="wt-mega-group" key={group.label}>
-                      <h4>{group.label}</h4>
+                      <p className="wt-mega-heading">{group.label}</p>
                       <ul>
                         {group.links.map((link) => (
                           <li key={link.href}>

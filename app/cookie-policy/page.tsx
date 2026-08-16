@@ -5,6 +5,7 @@ import { siteConfig } from "@/lib/siteConfig";
 export const metadata: Metadata = {
   title: "Cookie Policy | Wheelchair Taxi Sydney",
   description: "Cookie Policy for the Wheelchair Taxi Sydney website, operated by " + siteConfig.legalName + " Pty Ltd.",
+  alternates: { canonical: "/cookie-policy/" },
 };
 
 export default function CookiePolicyPage() {

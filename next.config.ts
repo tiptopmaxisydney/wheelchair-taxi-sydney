@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  trailingSlash: true,
   images: {
     minimumCacheTTL: 31536000,
     qualities: [65, 75],

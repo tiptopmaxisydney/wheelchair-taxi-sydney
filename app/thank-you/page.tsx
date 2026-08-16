@@ -5,6 +5,8 @@ import { siteConfig } from "@/lib/siteConfig";
 export const metadata: Metadata = {
   title: "Thank You | Wheelchair Taxi Sydney",
   description: "Thank you for contacting Wheelchair Taxi Sydney. Our team will be in touch shortly.",
+  alternates: { canonical: "/thank-you/" },
+  robots: { index: false, follow: true },
 };
 
 export default function ThankYouPage() {

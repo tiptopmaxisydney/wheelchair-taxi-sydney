@@ -6,6 +6,8 @@ import { siteConfig } from "@/lib/siteConfig";
 export const metadata: Metadata = {
   title: "Contact Us | Wheelchair Taxi Sydney",
   description: "Contact Wheelchair Taxi Sydney by phone, email or WhatsApp to book accessible transport or ask a question.",
+  keywords: ["contact wheelchair taxi sydney", "wheelchair taxi phone number", "book wheelchair taxi sydney"],
+  alternates: { canonical: "/contact-us/" },
 };
 
 export default function ContactUsPage() {
@@ -20,6 +22,7 @@ export default function ContactUsPage() {
 
       <section className="wt-section">
         <div className="container">
+          <h2 className="wt-visually-hidden">Contact Details</h2>
           <div className="wt-grid-3">
             <div className="wt-card">
               <h3>

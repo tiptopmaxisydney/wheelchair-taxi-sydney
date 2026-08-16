@@ -13,11 +13,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const servicePage = getServicePage(slug);
   if (servicePage) {
-    return { title: servicePage.metaTitle, description: servicePage.metaDescription };
+    return {
+      title: servicePage.metaTitle,
+      description: servicePage.metaDescription,
+      keywords: [servicePage.navLabel, servicePage.eyebrow, "wheelchair taxi sydney", "wheelchair accessible transport"],
+      alternates: { canonical: `/${slug}/` },
+    };
   }
   const post = getBlogPost(slug);
   if (post) {
-    return { title: post.metaTitle, description: post.metaDescription };
+    return {
+      title: post.metaTitle,
+      description: post.metaDescription,
+      keywords: [post.title, "wheelchair taxi sydney blog", "accessible transport"],
+      alternates: { canonical: `/${slug}/` },
+    };
   }
   return {};
 }

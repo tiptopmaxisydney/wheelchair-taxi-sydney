@@ -5,6 +5,7 @@ import { siteConfig } from "@/lib/siteConfig";
 export const metadata: Metadata = {
   title: "Privacy Policy | Wheelchair Taxi Sydney",
   description: "Privacy Policy for Wheelchair Taxi Sydney, operated by " + siteConfig.legalName + " Pty Ltd.",
+  alternates: { canonical: "/privacy-policy/" },
 };
 
 export default function PrivacyPolicyPage() {

@@ -14,7 +14,7 @@ export default function HowItWorks() {
           {howItWorks.map((step) => (
             <div className="wt-step" key={step.step}>
               <div className="wt-step-num">{step.step}</div>
-              <h4>{step.title}</h4>
+              <h3>{step.title}</h3>
               {step.intro && <p>{step.intro}</p>}
               <ul>
                 {step.items.map((item) => (

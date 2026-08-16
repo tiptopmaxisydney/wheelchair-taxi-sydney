@@ -11,7 +11,7 @@ export default function FleetShowcase() {
           {fleetTypes.map((fleet) => (
             <div className="wt-fleet-card" key={fleet.title}>
               <Image src={fleet.image} alt={fleet.title} width={90} height={90} loading="lazy" />
-              <h4>{fleet.title}</h4>
+              <h3>{fleet.title}</h3>
               <p>{fleet.description}</p>
             </div>
           ))}
