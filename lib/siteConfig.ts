@@ -11,6 +11,7 @@ export const siteConfig = {
   email: "bookings@wheelchairtaxisydney.com.au",
   whatsapp: "https://wa.me/+61410025786",
   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
+  googleAdsId: process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "",
   social: {
     facebook: "https://www.facebook.com/tiptoptransportsolutions/",
     youtube: "https://www.youtube.com/channel/UCgHnPRVHFJXdR6gWBuskwDQ",

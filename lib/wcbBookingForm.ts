@@ -1,4 +1,5 @@
 import { WCBDateTime, parseValue } from "@/lib/wcbDateTime";
+import { trackBookingConversion } from "@/lib/googleAds";
 
 /**
  * Port of the wheelchair-booking plugin's wcb-booking-form.js (the live
@@ -543,6 +544,7 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
         const reference = body?.data?.booking_id;
         const suffix = reference ? ` Reference: ${reference}.` : "";
         setFeedback(config.messages.success + suffix, "success");
+        trackBookingConversion(reference);
       })
       .catch((error: Error) => {
         setFeedback(error.message || config.messages.error, "error");
