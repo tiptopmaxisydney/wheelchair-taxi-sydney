@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { siteConfig } from "@/lib/siteConfig";
 
 export default function AppSection() {
@@ -17,13 +18,13 @@ export default function AppSection() {
             </p>
             <div className="wt-app-buttons">
               <a href={siteConfig.apps.appStore} className="wt-app-btn" target="_blank" rel="noreferrer">
-                <i className="fab fa-apple" aria-hidden="true" style={{ fontSize: "1.4rem" }} />
+                <FaApple aria-hidden="true" style={{ fontSize: "1.4rem" }} />
                 <span>
                   <span className="sub">Download on the</span>iOS App Store
                 </span>
               </a>
               <a href={siteConfig.apps.playStore} className="wt-app-btn" target="_blank" rel="noreferrer">
-                <i className="fab fa-google-play" aria-hidden="true" style={{ fontSize: "1.3rem" }} />
+                <FaGooglePlay aria-hidden="true" style={{ fontSize: "1.3rem" }} />
                 <span>
                   <span className="sub">Get it on</span>Google Play
                 </span>

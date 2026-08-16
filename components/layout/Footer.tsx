@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FaFacebookF, FaYoutube, FaMapMarkerAlt, FaRegEnvelope, FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
 import { siteConfig } from "@/lib/siteConfig";
 import { footerServices, footerLinks } from "@/lib/homeData";
 
@@ -18,10 +19,10 @@ export default function Footer() {
             </p>
             <div className="wt-footer-socials">
               <a href={siteConfig.social.facebook} target="_blank" rel="noreferrer" aria-label="Facebook">
-                <i className="fab fa-facebook-f" aria-hidden="true" />
+                <FaFacebookF aria-hidden="true" />
               </a>
               <a href={siteConfig.social.youtube} target="_blank" rel="noreferrer" aria-label="YouTube">
-                <i className="fab fa-youtube" aria-hidden="true" />
+                <FaYoutube aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -52,22 +53,22 @@ export default function Footer() {
             <h3>Head Office</h3>
             <ul className="wt-footer-contact">
               <li>
-                <i className="fas fa-map-marker-alt" aria-hidden="true" />
+                <FaMapMarkerAlt aria-hidden="true" />
                 <span>
                   {siteConfig.address.street}, {siteConfig.address.locality} {siteConfig.address.region}{" "}
                   {siteConfig.address.postcode}
                 </span>
               </li>
               <li>
-                <i className="far fa-envelope" aria-hidden="true" />
+                <FaRegEnvelope aria-hidden="true" />
                 <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
               </li>
               <li>
-                <i className="fas fa-phone-alt" aria-hidden="true" />
+                <FaPhoneAlt aria-hidden="true" />
                 <a href={`tel:${siteConfig.phoneIntl}`}>{siteConfig.phoneIntlDisplay}</a>
               </li>
               <li>
-                <i className="fab fa-whatsapp" aria-hidden="true" />
+                <FaWhatsapp aria-hidden="true" />
                 <a href={siteConfig.whatsapp} target="_blank" rel="noreferrer">
                   WhatsApp
                 </a>

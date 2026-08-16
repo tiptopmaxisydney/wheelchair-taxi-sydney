@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { FaPhoneAlt } from "react-icons/fa";
 import { siteConfig } from "@/lib/siteConfig";
 
 type ServiceHeroProps = {
@@ -21,7 +22,7 @@ export default function ServiceHero({ eyebrow, title, description, breadcrumbLab
           <p>{description}</p>
           <div className="wt-page-hero-actions">
             <a href={`tel:${siteConfig.phoneIntl}`} className="wt-btn wt-btn-primary">
-              <i className="fas fa-phone-alt" aria-hidden="true" /> Call Us
+              <FaPhoneAlt aria-hidden="true" /> Call Us
             </a>
             <a href="/#wcb-booking-form" className="wt-btn wt-btn-outline-inverted">
               Get a Quote

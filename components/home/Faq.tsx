@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FaPlus, FaMinus } from "react-icons/fa";
 import { faqColumns as defaultFaqColumns, type Faq as FaqItem } from "@/lib/homeData";
 
 type FaqProps = {
@@ -32,7 +33,7 @@ export default function Faq({ columns = defaultFaqColumns, title = "Frequently A
                       onClick={() => setOpenKey(isOpen ? null : key)}
                     >
                       {faq.question}
-                      <i className={`fas fa-${isOpen ? "minus" : "plus"}`} aria-hidden="true" />
+                      {isOpen ? <FaMinus aria-hidden="true" /> : <FaPlus aria-hidden="true" />}
                     </button>
                     <div className="wt-faq-answer">{faq.answer}</div>
                   </div>

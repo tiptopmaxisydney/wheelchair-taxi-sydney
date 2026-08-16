@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { FaPhoneAlt, FaRegEnvelope, FaFacebookF, FaYoutube, FaBars, FaTimes } from "react-icons/fa";
 import { siteConfig } from "@/lib/siteConfig";
 import { servicesMenu } from "@/lib/navigation";
 
@@ -21,18 +22,18 @@ export default function Header() {
         <div className="wt-topbar-inner">
           <div className="wt-topbar-contact">
             <a href={`tel:${siteConfig.phoneIntl}`}>
-              <i className="fas fa-phone-alt" aria-hidden="true" /> {siteConfig.phoneIntlDisplay}
+              <FaPhoneAlt aria-hidden="true" /> {siteConfig.phoneIntlDisplay}
             </a>
             <a href={`mailto:${siteConfig.email}`}>
-              <i className="far fa-envelope" aria-hidden="true" /> {siteConfig.email}
+              <FaRegEnvelope aria-hidden="true" /> {siteConfig.email}
             </a>
           </div>
           <div className="wt-topbar-socials">
             <a href={siteConfig.social.facebook} target="_blank" rel="noreferrer" aria-label="Facebook">
-              <i className="fab fa-facebook-f" aria-hidden="true" />
+              <FaFacebookF aria-hidden="true" />
             </a>
             <a href={siteConfig.social.youtube} target="_blank" rel="noreferrer" aria-label="YouTube">
-              <i className="fab fa-youtube" aria-hidden="true" />
+              <FaYoutube aria-hidden="true" />
             </a>
           </div>
         </div>
@@ -97,7 +98,7 @@ export default function Header() {
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
             >
-              <i className={menuOpen ? "fas fa-times" : "fas fa-bars"} aria-hidden="true" />
+              {menuOpen ? <FaTimes aria-hidden="true" /> : <FaBars aria-hidden="true" />}
             </button>
           </div>
         </div>

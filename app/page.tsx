@@ -38,12 +38,6 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      <link
-        rel="preload"
-        href="/images/logo-new.png"
-        as="image"
-        fetchPriority="high"
-      />
 
       <Hero />
       <AboutSection />

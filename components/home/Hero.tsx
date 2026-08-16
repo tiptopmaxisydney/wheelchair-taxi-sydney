@@ -1,3 +1,4 @@
+import { FaPhoneAlt } from "react-icons/fa";
 import { siteConfig } from "@/lib/siteConfig";
 import BookingForm from "./BookingForm";
 
@@ -15,7 +16,7 @@ export default function Hero() {
             </p>
             <div className="wt-hero-actions">
               <a href={`tel:${siteConfig.phoneIntl}`} className="wt-btn wt-btn-primary">
-                <i className="fas fa-phone-alt" aria-hidden="true" /> Call Us
+                <FaPhoneAlt aria-hidden="true" /> Call Us
               </a>
             </div>
           </div>

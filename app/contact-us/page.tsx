@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FaPhoneAlt, FaRegEnvelope, FaWhatsapp } from "react-icons/fa";
 import ServiceHero from "@/components/service/ServiceHero";
 import { siteConfig } from "@/lib/siteConfig";
 
@@ -22,7 +23,7 @@ export default function ContactUsPage() {
           <div className="wt-grid-3">
             <div className="wt-card">
               <h3>
-                <i className="fas fa-phone-alt" aria-hidden="true" style={{ marginRight: 8, color: "var(--wt-blue)" }} /> Phone
+                <FaPhoneAlt aria-hidden="true" style={{ marginRight: 8, color: "var(--wt-blue)" }} /> Phone
               </h3>
               <p>
                 <a href={`tel:${siteConfig.phoneIntl}`}>{siteConfig.phoneIntlDisplay}</a>
@@ -32,7 +33,7 @@ export default function ContactUsPage() {
             </div>
             <div className="wt-card">
               <h3>
-                <i className="far fa-envelope" aria-hidden="true" style={{ marginRight: 8, color: "var(--wt-blue)" }} /> Email
+                <FaRegEnvelope aria-hidden="true" style={{ marginRight: 8, color: "var(--wt-blue)" }} /> Email
               </h3>
               <p>
                 <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
@@ -40,7 +41,7 @@ export default function ContactUsPage() {
             </div>
             <div className="wt-card">
               <h3>
-                <i className="fab fa-whatsapp" aria-hidden="true" style={{ marginRight: 8, color: "var(--wt-blue)" }} /> WhatsApp
+                <FaWhatsapp aria-hidden="true" style={{ marginRight: 8, color: "var(--wt-blue)" }} /> WhatsApp
               </h3>
               <p>
                 <a href={siteConfig.whatsapp} target="_blank" rel="noreferrer">
