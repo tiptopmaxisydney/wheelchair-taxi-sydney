@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import ServiceHero from "@/components/service/ServiceHero";
-import { blogPosts } from "@/lib/blogPosts";
+import { getBlogPosts } from "@/lib/blogPosts";
 
 export const metadata: Metadata = {
   title: "Blog | Wheelchair Taxi Sydney",
@@ -11,7 +11,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/blog/" },
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogPosts = await getBlogPosts();
+
   return (
     <>
       <ServiceHero

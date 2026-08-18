@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ServicePageTemplate from "@/components/service/ServicePageTemplate";
 import BlogPostTemplate from "@/components/blog/BlogPostTemplate";
-import { servicePages, getServicePage } from "@/lib/servicePages";
-import { blogPosts, getBlogPost } from "@/lib/blogPosts";
+import { getServicePages, getServicePage } from "@/lib/servicePages";
+import { getBlogPosts, getBlogPost } from "@/lib/blogPosts";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const [servicePages, blogPosts] = await Promise.all([getServicePages(), getBlogPosts()]);
   return [...servicePages.map((p) => ({ slug: p.slug })), ...blogPosts.map((p) => ({ slug: p.slug }))];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const servicePage = getServicePage(slug);
+  const servicePage = await getServicePage(slug);
   if (servicePage) {
     return {
       title: servicePage.metaTitle,
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       alternates: { canonical: `/${slug}/` },
     };
   }
-  const post = getBlogPost(slug);
+  const post = await getBlogPost(slug);
   if (post) {
     return {
       title: post.metaTitle,
@@ -35,12 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function DynamicPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  const servicePage = getServicePage(slug);
+  const servicePage = await getServicePage(slug);
   if (servicePage) {
     return <ServicePageTemplate page={servicePage} />;
   }
 
-  const post = getBlogPost(slug);
+  const post = await getBlogPost(slug);
   if (post) {
     return <BlogPostTemplate post={post} />;
   }

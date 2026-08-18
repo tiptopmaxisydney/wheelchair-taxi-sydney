@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
   images: {
     minimumCacheTTL: 31536000,
     qualities: [65, 75],
+    // content-hub CMS media (Payload uploads) - dev hub runs on :3001, prod at cms.babyseattaxisydney.com.au.
+    remotePatterns: [
+      { protocol: "http", hostname: "localhost", port: "3001" },
+      { protocol: "https", hostname: "cms.babyseattaxisydney.com.au" },
+    ],
   },
   async headers() {
     return [

@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/siteConfig";
-import { servicePages } from "@/lib/servicePages";
-import { blogPosts } from "@/lib/blogPosts";
+import { getServicePages } from "@/lib/servicePages";
+import { getBlogPosts } from "@/lib/blogPosts";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [servicePages, blogPosts] = await Promise.all([getServicePages(), getBlogPosts()]);
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${siteConfig.url}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${siteConfig.url}/aboutus/`, changeFrequency: "monthly", priority: 0.7 },
