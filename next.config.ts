@@ -28,6 +28,17 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // URL restructure (2026-08): transport-solutions-sydney (tiptopmaxisydney.com.au) is the
+  // canonical brand for this keyword - this site's duplicate page permanently redirects there.
+  async redirects() {
+    return [
+      {
+        source: "/western-sydney-airport-wheelchair-taxi/",
+        destination: "https://tiptopmaxisydney.com.au/western-sydney-airport-wheelchair-taxi/",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
