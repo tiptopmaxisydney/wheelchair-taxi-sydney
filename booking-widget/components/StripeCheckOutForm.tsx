@@ -24,7 +24,11 @@ const CheckoutForm = ({ amount, onPaymentSuccess, isModalOpen, onClose, onCancel
       const { error, paymentIntent }: any = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: window.location.href,
+          // Payment methods that require an off-page step (3D Secure, etc.)
+          // bounce the browser back here after confirmation — send them to the
+          // thank-you page instead of back to the booking widget's own URL,
+          // which just left the raw payment_intent query params sitting unused.
+          return_url: `${window.location.origin}/thank-you`,
         },
       });
 

@@ -102,6 +102,29 @@ export default function TiptopBookingForm() {
       return;
     }
 
+    // Captured before the deletes below strip the raw date/time fields off
+    // `values` — this is what gets shown on the /thank-you page, since that
+    // page is reached after a full-page Stripe redirect and can't rely on
+    // this component's in-memory state anymore.
+    const selectedVehicle = vehicleDetails.find(
+      (vehicle) => vehicle.vehicle_id === values.vehicle_id
+    );
+    const bookingSummary = {
+      pickup_address: values?.pickup_address,
+      drop_address: values?.drop_address,
+      date: values?.date ? dayjs(values.date).format("DD MMM YYYY") : undefined,
+      time: values?.time ? dayjs(values.time).format("hh:mm A") : undefined,
+      is_return_trip: !!bookingFormData?.is_return_trip,
+      return_pickup_address: values?.return_pickup_address,
+      return_drop_address: values?.return_drop_address,
+      return_date: values?.return_date ? dayjs(values.return_date).format("DD MMM YYYY") : undefined,
+      return_time: values?.return_time ? dayjs(values.return_time).format("hh:mm A") : undefined,
+      vehicle_name: selectedVehicle?.vehicle_name || "",
+      passenger: moreDetailsData?.passenger,
+      name: moreDetailsData?.name,
+      email: moreDetailsData?.email,
+    };
+
     delete values.date;
     delete values.time;
     delete values.return_date;
@@ -174,6 +197,24 @@ export default function TiptopBookingForm() {
       const amount = result?.amount;
 
       if (clientSecret) {
+        // Stored (rather than passed via component state) because redirect-based
+        // payment methods (e.g. 3D Secure) bounce the browser through a full page
+        // navigation back to /thank-you — this component unmounts, so sessionStorage
+        // is what lets the thank-you page still show the booking details.
+        try {
+          sessionStorage.setItem(
+            "tiptop_last_booking",
+            JSON.stringify({
+              ...bookingSummary,
+              booking_id: result?.booking_id,
+              amount,
+            })
+          );
+        } catch {
+          // ignore — sessionStorage unavailable (private mode, etc.); thank-you
+          // page just falls back to its generic message
+        }
+
         setClientSecret(clientSecret);
         setAmount(amount);
         setIsPaymentModalOpen(true);

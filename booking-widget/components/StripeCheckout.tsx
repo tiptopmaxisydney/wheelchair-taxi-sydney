@@ -14,7 +14,7 @@ const StripeElement = (props: any) => {
   return (
     <>
       {clientSecret && (
-        <Elements stripe={stripePromise} options={{ clientSecret }}>
+        <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret }}>
           <CheckoutForm {...props} amount={amount} />
         </Elements>
       )}
