@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Form, FormInstance } from "antd";
 import { IVehicleDetails, IVehicleTypeOptions } from "@/booking-widget/interfaces/createBooking";
 import { GlobalContext } from "@/booking-widget/context/Provider";
@@ -48,12 +48,21 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
 
   // Step 2 only offers the wheelchair-accessible vehicle, so default it to
   // selected as soon as pricing loads instead of making the user click it.
+  // Derived as a plain string (not the whole vehicleDetails array) so the effect
+  // below only re-runs when the actual id changes, not on every pricing refetch —
+  // form.setFieldValue on this form also holds dayjs values (date/time pickers),
+  // and re-triggering AntD's watch diffing on every refetch is what was surfacing
+  // the "There may be circular references" warning from rc-util's isEqual.
+  const wheelchairVehicleId = useMemo(
+    () => vehicleDetails.find((v) => v.is_wheelchair_vehicle)?.vehicle_id?._id,
+    [vehicleDetails]
+  );
+
   useEffect(() => {
-    const wheelchairVehicle = vehicleDetails.find((v) => v.is_wheelchair_vehicle);
-    if (wheelchairVehicle && form.getFieldValue("vehicle_id") !== wheelchairVehicle.vehicle_id?._id) {
-      form.setFieldValue("vehicle_id", wheelchairVehicle.vehicle_id?._id);
+    if (wheelchairVehicleId && form.getFieldValue("vehicle_id") !== wheelchairVehicleId) {
+      form.setFieldValue("vehicle_id", wheelchairVehicleId);
     }
-  }, [vehicleDetails]);
+  }, [wheelchairVehicleId, form]);
 
   const bookingTransferType = Form.useWatch("booking_transfer_type", form);
   const transferPointValue = Form.useWatch("transfer_point", form);

@@ -192,7 +192,7 @@ const Step2PassengerVehicle: React.FC<Step2PassengerVehicleProps> = ({
                       : `Price per chair $${Number(vehicleInfo?.wheel_chair_charges).toFixed(2)}`
                   }
                   icon={<WheelChairIcon />}
-                  initialValue={0}
+                  initialValue={1}
                   min={0}
                   max={effectiveMaxWheelchairs}
                   onChange={(value) => {
