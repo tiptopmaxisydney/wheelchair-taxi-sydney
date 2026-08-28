@@ -1,5 +1,6 @@
 import { WCBDateTime, parseValue } from "@/lib/wcbDateTime";
 import { trackBookingConversion } from "@/lib/googleAds";
+import { getAttribution, getCurrentPage } from "@/booking-widget/utils/attribution";
 
 /**
  * Port of the wheelchair-booking plugin's wcb-booking-form.js (the live
@@ -479,7 +480,18 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
       .filter(Boolean)
       .join(" | ");
 
+    const attribution = getAttribution();
     const payload = {
+      brand: attribution.brand,
+      utm_source: attribution.utm_source,
+      utm_medium: attribution.utm_medium,
+      utm_campaign: attribution.utm_campaign,
+      utm_term: attribution.utm_term,
+      utm_content: attribution.utm_content,
+      gclid: attribution.gclid,
+      fbclid: attribution.fbclid,
+      landing_page: attribution.landing_page,
+      ...getCurrentPage(),
       pickup_address: pickupAddress,
       pick_up_lat: pickupLat,
       pick_up_long: pickupLng,

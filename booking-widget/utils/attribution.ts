@@ -24,6 +24,8 @@ export interface Attribution {
   gclid?: string;
   fbclid?: string;
   landing_page?: string;
+  source_page?: string;
+  source_page_title?: string;
 }
 
 // Captures utm_*/gclid/fbclid from the current URL into sessionStorage. A fresh
@@ -70,9 +72,36 @@ export function getAttribution(): Attribution {
   return { brand: BRAND };
 }
 
-// Live snapshot of the page the guest is actually on right now — distinct from
-// landing_page (first page of the session), captured fresh at submit time.
+// The actual booking form only lives on the homepage (#wcb-booking-form) —
+// every "Book Now" CTA across the site, no matter which page it's on, is a
+// same-site link to "/#wcb-booking-form". So a live read of
+// window.location.href at submit time (the old behaviour) always reports the
+// homepage, never the page the guest actually clicked Book Now from. Call
+// this from a click listener on those CTAs, before the browser navigates
+// away, to record the real originating page instead.
+export function recordSourcePage() {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const attribution: Attribution = raw ? JSON.parse(raw) : { brand: BRAND };
+    attribution.source_page = window.location.href;
+    attribution.source_page_title = document.title;
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(attribution));
+  } catch {
+    // sessionStorage unavailable — best-effort, never block navigation over it.
+  }
+}
+
+// The page the guest actually clicked Book Now from (recorded by
+// recordSourcePage before the same-site navigation to the homepage form).
+// Falls back to a live read of the current page for the rare case a guest
+// reaches the form some other way (e.g. lands directly on
+// /#wcb-booking-form, or Book Now is clicked from the homepage itself).
 export function getCurrentPage(): { source_page?: string; source_page_title?: string } {
+  const attribution = getAttribution();
+  if (attribution.source_page) {
+    return { source_page: attribution.source_page, source_page_title: attribution.source_page_title };
+  }
   if (typeof window === "undefined") return {};
   return {
     source_page: window.location.href,
