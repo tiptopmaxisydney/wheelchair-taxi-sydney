@@ -7,6 +7,7 @@ import "@/booking-widget/booking-widget.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import StickyCta from "@/components/layout/StickyCta";
+import AttributionTracker from "@/components/AttributionTracker";
 import { siteConfig } from "@/lib/siteConfig";
 
 const lato = Lato({
@@ -117,6 +118,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body id="top">
         <AntdRegistry>
+          <AttributionTracker />
           <Header />
           <main>{children}</main>
           <Footer />

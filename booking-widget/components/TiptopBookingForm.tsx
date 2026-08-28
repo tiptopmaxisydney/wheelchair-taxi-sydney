@@ -16,6 +16,7 @@ import { Stop } from "@/booking-widget/components/Step1JourneyDetails";
 import StripeElement from "@/booking-widget/components/StripeCheckout";
 import { useRouter, useSearchParams } from "next/navigation";
 import dayjs from "dayjs";
+import { getAttribution, getCurrentPage } from "@/booking-widget/utils/attribution";
 
 interface BookingFormProps {
   pickupLatLng: {
@@ -142,9 +143,20 @@ export default function TiptopBookingForm() {
         stopsList.length > 0 &&
         stopsList.every((stop: any) => stop.name && stop.lat && stop.long);
 
+      const attribution = getAttribution();
       const payload = {
         ...values,
         ...moreDetailsData,
+        brand: attribution.brand,
+        utm_source: attribution.utm_source,
+        utm_medium: attribution.utm_medium,
+        utm_campaign: attribution.utm_campaign,
+        utm_term: attribution.utm_term,
+        utm_content: attribution.utm_content,
+        gclid: attribution.gclid,
+        fbclid: attribution.fbclid,
+        landing_page: attribution.landing_page,
+        ...getCurrentPage(),
         child_seat: moreDetailsData?.child_seat,
         wheel_chair: moreDetailsData?.wheel_chair,
         passenger: moreDetailsData?.passenger || 1,
