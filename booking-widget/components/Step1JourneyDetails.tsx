@@ -5,7 +5,7 @@ import ClockIcon from "@/booking-widget/components/icons/ClockIcon";
 import PinIcon from "@/booking-widget/components/icons/PinIcon";
 import RadioIcon from "@/booking-widget/components/icons/RadioIcon";
 import SwapIcon from "@/booking-widget/components/icons/SwapIcon";
-import { DatePicker, Form, Select, TimePicker, Input, Modal, Radio } from "antd";
+import { DatePicker, Form, Select, TimePicker, Input, Radio } from "antd";
 import { useState, useEffect, useCallback, useContext } from "react";
 import { IVehicleTypeOptions } from "@/booking-widget/interfaces/createBooking";
 import { disabledPreviousDate, loadGoogleMapScript } from "@/booking-widget/utils/CommonFunctions";
@@ -17,10 +17,9 @@ import AddressAutocomplete, { AddressSelection } from "@/booking-widget/componen
 import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
 import { GlobalContext } from "@/booking-widget/context/Provider";
-import henceforthApi, { center, country, DomesticAirportAddress, InternationalAirportAddress, MohaliAirportAddress } from "@/booking-widget/utils/api";
+import henceforthApi, { center } from "@/booking-widget/utils/api";
 
 const { Option } = Select;
-const RadioGroup = Radio.Group;
 
 export interface Step1JourneyDetailsProps {
   vehicleOptions: IVehicleTypeOptions[];
@@ -47,7 +46,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
   const [stops, setStops] = useState<Stop[]>([]);
   const [updatedStops, setUpdatedStops] = useState<Stop[]>([]);
   const { Toast } = useContext(GlobalContext)
-  const [showFields, setShowFields] = useState(false)
   const [pickupLatLng, setPickupLatLng] = useState<{
     lat: number;
     lng: number;
@@ -88,8 +86,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
     setUpdatedStops(updatedStops);
   }, [stops]);
 
-  const [isAirport, setIsAirport] = useState(false)
-  const [selectedAddress, setSelectedAddress] = useState<any>("Sydney_international_airport")
 
   // ── Booking type (Transfer / Airport Transfer) — same flow as the dispatcher's create-booking form ──
   const bookingTransferType = Form.useWatch("booking_transfer_type", form);
@@ -148,15 +144,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
     }
   }, [isAirportDropoff]);
 
-  // If the pickup address is detected as an airport (typed address match below),
-  // default the booking type to Airport Transfer / Pickup so the flight-details
-  // fields surface automatically instead of leaving the user to find the toggle.
-  useEffect(() => {
-    if (showFields && form.getFieldValue("booking_transfer_type") !== "airport_transfer") {
-      form.setFieldsValue({ booking_transfer_type: "airport_transfer", transfer_point: "pickup" });
-    }
-  }, [showFields]);
-
   // scheduled_date drives pricing/availability for every booking, but airport
   // transfers are keyed off arrival_date on the backend — keep both in sync.
   const setPrimaryDate = (value: any) => {
@@ -180,8 +167,8 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
   }, [isAirportTransfer]);
 
   useEffect(() => {
-    onAirportPickupChange?.(showFields || isAirportTransfer);
-  }, [showFields, isAirportTransfer, onAirportPickupChange]);
+    onAirportPickupChange?.(isAirportTransfer);
+  }, [isAirportTransfer, onAirportPickupChange]);
 
   useEffect(() => {
     onReturnTripChange?.(isReturnTrip);
@@ -204,7 +191,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
       const pickupAddress = String(pickup);
       setPickupLatLng({ lat: Number(pickup_lat), lng: Number(pickup_lng) });
       form.setFieldValue("pickup_address", pickupAddress);
-      setShowFields(/airport/i.test(pickupAddress));
     }
 
     if (dropoff && dropoff_lat && dropoff_lng) {
@@ -236,55 +222,13 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
     }
   }, [searchParams]);
 
-  const onSelectmodalAddress = () => {
-    if (selectedAddress == 'mohali_international_airport') {
-      setPickupLatLng({
-        lat: MohaliAirportAddress.lat,
-        lng: MohaliAirportAddress.lng,
-      });
-      form.setFieldValue("pickup_address", MohaliAirportAddress.formattedAddress);
-    } else {
-      if (selectedAddress == "Sydney_international_airport") {
-        setPickupLatLng({
-          lat: InternationalAirportAddress.lat,
-          lng: InternationalAirportAddress.lng,
-        });
-        form.setFieldValue("pickup_address", InternationalAirportAddress.formattedAddress);
-
-      } else {
-        setPickupLatLng({
-          lat: DomesticAirportAddress.lat,
-          lng: DomesticAirportAddress.lng,
-        });
-        form.setFieldValue("pickup_address", DomesticAirportAddress.formattedAddress);
-      }
-    }
-
-    setIsAirport(false)
-    form.setFieldValue("time", null);
-  }
-
-
-  const isAirportName = (name?: string) => {
-    const lname = name?.toLowerCase() || "";
-    return (
-      lname.includes("shaheed bhagat singh international airport, chandigarh") ||
-      lname.includes("sydney airport")
-    );
-  };
-
   const handleAddressResolve = (field: string, result: AddressSelection, index?: number) => {
-    const { address, lat, lng, name } = result;
+    const { address, lat, lng } = result;
 
     if (field === "pickup") {
-      if (isAirportName(name)) {
-        setIsAirport(true);
-        setShowFields(true);
-      } else {
-        setPickupLatLng({ lat: Number(lat), lng: Number(lng) });
-        form.setFieldValue("pickup_address", address);
-        form.setFieldValue("time", null);
-      }
+      setPickupLatLng({ lat: Number(lat), lng: Number(lng) });
+      form.setFieldValue("pickup_address", address);
+      form.setFieldValue("time", null);
     }
 
     if (field === "destination") {
@@ -514,9 +458,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
     }
   }, [isReturnTrip]);
 
-  // Swap pickup <-> drop-off, including lat/lng state and airport detection —
-  // a swap can turn the drop-off into the airport leg, which the (pickup-only)
-  // airport-detection above wouldn't otherwise catch.
   const handleSwapLocations = () => {
     const currentPickupAddress = form.getFieldValue("pickup_address");
     const currentDropAddress = form.getFieldValue("drop_address");
@@ -531,10 +472,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
     setPickupLatLng(newPickupLatLng);
     setDropLatLng(newDropLatLng);
     setDropAddress(currentPickupAddress || "");
-
-    const airportNow = /airport/i.test(currentDropAddress || "");
-    setShowFields(airportNow);
-    if (!airportNow) setIsAirport(false);
     form.setFieldValue("time", null);
   };
 
@@ -961,22 +898,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
           </div>
         </div>
       )}
-
-      <Modal onOk={onSelectmodalAddress} onCancel={() => setIsAirport(false)} title={<h2 className="fw-medium  mb-3 text-center">Pickup Points</h2>} centered open={isAirport}>
-        <div className="mb-4 "
-        >
-          <RadioGroup onChange={(value) => setSelectedAddress(value.target.value)} className="">
-            {
-              country == "in" ? <>
-                <Radio className="mb-3 text-black" value="mohali_international_airport"><span>Mohali International Airport - Pickup from Rideshare Area</span></Radio>
-              </> : <>
-                <Radio className="mb-3 text-black" value="Sydney_international_airport"><span>Rideshare Area (Near P7 Buildings) Sydney International Airport</span></Radio>
-                <Radio className="text-black" value="sydney_domestic_airport"><span>Green Priority Pickup Area (T2, T3), Sydney Domestic Airport.</span></Radio>
-              </>
-            }
-          </RadioGroup>
-        </div>
-      </Modal>
 
       <div className="mb-0">
         <Form.Item
