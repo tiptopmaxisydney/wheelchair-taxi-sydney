@@ -46,6 +46,8 @@ const requests = {
   get: (url: string) => superagent.get(`${API_ROOT}${url}`).use(tokenPlugin).then(responseBody),
   post: (url: string, body: any) =>
     superagent.post(`${API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody),
+  patch: (url: string, body: any) =>
+    superagent.patch(`${API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody),
 };
 
 const createBooking = {
@@ -56,8 +58,17 @@ const createBooking = {
   getAirports: () => requests.get("booking/web/airports"),
 };
 
+// Local-first address cache — same public/guest routes as tiptopnextjs's SavedAddress
+// namespace, no auth needed since this is a guest checkout with no login.
+export const SavedAddress = {
+  search: (q: string) => requests.get(`saved-address/search/web?q=${encodeURIComponent(q)}`),
+  resolve: (info: any) => requests.post(`saved-address/resolve/web`, info),
+  markUsed: (id: string) => requests.patch(`saved-address/${id}/use`, {}),
+};
+
 const henceforthApi = {
   createBooking,
+  SavedAddress,
 };
 
 export default henceforthApi;

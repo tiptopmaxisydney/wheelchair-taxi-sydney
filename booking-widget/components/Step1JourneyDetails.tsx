@@ -6,13 +6,14 @@ import PinIcon from "@/booking-widget/components/icons/PinIcon";
 import RadioIcon from "@/booking-widget/components/icons/RadioIcon";
 import SwapIcon from "@/booking-widget/components/icons/SwapIcon";
 import { DatePicker, Form, Select, TimePicker, Input, Modal, Radio } from "antd";
-import { useState, useRef, useEffect, useCallback, useContext } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { IVehicleTypeOptions } from "@/booking-widget/interfaces/createBooking";
 import { disabledPreviousDate, loadGoogleMapScript } from "@/booking-widget/utils/CommonFunctions";
 import PlusIconWithBorder from "@/booking-widget/components/icons/PlusIconWithBorder";
 import CrossIconWithBorder from "@/booking-widget/components/icons/CrossIconWithBorder";
 import DestinationSquareIcon from "@/booking-widget/components/icons/DestinationSquareIcon";
 import FormFieldError from "@/booking-widget/components/FormFieldError";
+import AddressAutocomplete, { AddressSelection } from "@/booking-widget/components/AddressAutocomplete";
 import dayjs from "dayjs";
 import { useSearchParams } from "next/navigation";
 import { GlobalContext } from "@/booking-widget/context/Provider";
@@ -46,10 +47,7 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
   const [stops, setStops] = useState<Stop[]>([]);
   const [updatedStops, setUpdatedStops] = useState<Stop[]>([]);
   const { Toast } = useContext(GlobalContext)
-  const pickUpRef = useRef<any>(null);
   const [showFields, setShowFields] = useState(false)
-  const stopRefs = useRef<any[]>([]);
-  const dropRef = useRef<any>(null);
   const [pickupLatLng, setPickupLatLng] = useState<{
     lat: number;
     lng: number;
@@ -69,9 +67,6 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
   const [returnDropAddress, setReturnDropAddress] = useState("");
   const [returnPickupLatLng, setReturnPickupLatLng] = useState<{ lat: number; lng: number } | null>(null);
   const [returnDropLatLng, setReturnDropLatLng] = useState<{ lat: number; lng: number } | null>(null);
-  const returnPickUpRef = useRef<any>(null);
-  const returnDropRef = useRef<any>(null);
-  const returnStopRefs = useRef<any[]>([]);
 
   const handleAddReturnStop = useCallback(() => {
     setReturnStops([...returnStops, { name: "", lat: "", long: "" }]);
@@ -270,93 +265,58 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
   }
 
 
-  const initPlaceAPI = (field: string, index?: number, ref?: any) => {
-    if (ref.current) {
-      const km = (field == 'pickup') ? 50 : 165;
-      const degreesChange = km / 111.32; // 111.32 km per degree
-      const defaultBounds = {
-        north: center.lat + degreesChange,
-        south: center.lat - degreesChange,
-        east: center.lng + (degreesChange / Math.cos(center.lat * (Math.PI / 180))),
-        west: center.lng - (degreesChange / Math.cos(center.lat * (Math.PI / 180))),
-      };
-      const cityBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(defaultBounds.south, defaultBounds.west),
-        new google.maps.LatLng(defaultBounds.north, defaultBounds.east)
-      );
-      const autocompleteOptions = {
-        bounds: cityBounds,
-        fields: [
-          "formatted_address",
-          "geometry",
-          "name",
-        ],
-        componentRestrictions: { country: country },
-        strictBounds: true,
-      };
-      const autocomplete = new (window as any).google.maps.places.Autocomplete(
-        ref.current?.input,
-        autocompleteOptions
-      );
-      autocomplete.addListener("place_changed", async () => {
-        const place = autocomplete.getPlace();
-        let _address = place?.formatted_address;
-        const addressArray = _address?.split(",") || [];
-        const filteredArray = addressArray.filter((element: any) => !element.includes("+"));
-        const address = filteredArray.join(", ");
-        const lat = place?.geometry?.location?.lat().toString() || "";
-        const lng = place?.geometry?.location?.lng().toString() || "";
+  const isAirportName = (name?: string) => {
+    const lname = name?.toLowerCase() || "";
+    return (
+      lname.includes("shaheed bhagat singh international airport, chandigarh") ||
+      lname.includes("sydney airport")
+    );
+  };
 
-        if (field === "pickup") {
-          if (place?.name?.toLowerCase()?.includes("shaheed bhagat singh international airport, chandigarh") || place?.name?.toLowerCase()?.includes("sydney airport")) {
-            setIsAirport(true)
-            setShowFields(true)
-          } else {
-            setPickupLatLng({
-              lat,
-              lng,
-            });
-            form.setFieldValue("pickup_address", address);
-            form.setFieldValue("time", null);
-          }
-        }
+  const handleAddressResolve = (field: string, result: AddressSelection, index?: number) => {
+    const { address, lat, lng, name } = result;
 
+    if (field === "pickup") {
+      if (isAirportName(name)) {
+        setIsAirport(true);
+        setShowFields(true);
+      } else {
+        setPickupLatLng({ lat: Number(lat), lng: Number(lng) });
+        form.setFieldValue("pickup_address", address);
+        form.setFieldValue("time", null);
+      }
+    }
 
-        if (field === "destination") {
-          setDropLatLng({
-            lat,
-            lng,
-          });
-          form.setFieldValue("drop_address", address);
-          setDropAddress(address);
-        }
+    if (field === "destination") {
+      setDropLatLng({ lat: Number(lat), lng: Number(lng) });
+      form.setFieldValue("drop_address", address);
+      setDropAddress(address);
+    }
 
-        if (field === "stop" && index !== undefined) {
-          const updatedStops = [...stops];
-          updatedStops[index] = { name: address, lat, long: lng };
-          setStops(updatedStops);
-          setUpdatedStops(updatedStops);
-        }
+    if (field === "stop" && index !== undefined) {
+      const updatedStops = [...stops];
+      updatedStops[index] = { name: address, lat, long: lng };
+      setStops(updatedStops);
+      setUpdatedStops(updatedStops);
+    }
 
-        if (field === "return_pickup") {
-          setReturnPickupLatLng({ lat, lng });
-          setReturnPickupAddress(address);
-          form.setFieldValue("return_pickup_address", address);
-        }
+    if (field === "return_pickup") {
+      setReturnPickupLatLng({ lat: Number(lat), lng: Number(lng) });
+      setReturnPickupAddress(address);
+      form.setFieldValue("return_pickup_address", address);
+    }
 
-        if (field === "return_destination") {
-          setReturnDropLatLng({ lat, lng });
-          setReturnDropAddress(address);
-          form.setFieldValue("return_drop_address", address);
-        }
+    if (field === "return_destination") {
+      setReturnDropLatLng({ lat: Number(lat), lng: Number(lng) });
+      setReturnDropAddress(address);
+      form.setFieldValue("return_drop_address", address);
+    }
 
-        if (field === "return_stop" && index !== undefined) {
-          const updated = [...returnStops];
-          updated[index] = { name: address, lat, long: lng };
-          setReturnStops(updated);
-          setUpdatedReturnStops(updated);
-        }
-      });
+    if (field === "return_stop" && index !== undefined) {
+      const updated = [...returnStops];
+      updated[index] = { name: address, lat, long: lng };
+      setReturnStops(updated);
+      setUpdatedReturnStops(updated);
     }
   };
 
@@ -580,7 +540,7 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
 
   return (
     <>
-      <div className="mb-3">
+      <div className="mb-3 address-section">
         <div className="flex flex-wrap items-start gap-6 mb-3">
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Journey Type</label>
@@ -667,20 +627,12 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
                   { required: true, message: "Please enter pickup location" },
                 ]}
               >
-                <Input
-                  type="text"
-                  ref={pickUpRef}
-                  size="large"
-                  variant="borderless"
+                <AddressAutocomplete
+                  bordered={false}
                   className="!p-0"
+                  biasField="pickup"
                   placeholder="Enter pickup location"
-                  onFocus={() => {
-                    setTimeout(() => {
-                      loadGoogleMapScript(() => {
-                        initPlaceAPI("pickup", 0, pickUpRef);
-                      });
-                    }, 500);
-                  }}
+                  onResolve={(result) => handleAddressResolve("pickup", result)}
                 />
               </Form.Item>
             </div>
@@ -700,20 +652,13 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
                 noStyle
                 rules={[{ required: true, message: "Please enter destination" }]}
               >
-                <Input
-                  type="text"
-                  size="large"
-                  variant="borderless"
+                <AddressAutocomplete
+                  bordered={false}
                   className="!p-0"
-                  placeholder="Enter your destination"
-                  ref={dropRef}
                   value={dropAddress}
-                  onChange={(e) => setDropAddress(e.target.value)}
-                  onFocus={() => {
-                    setTimeout(() => {
-                      initPlaceAPI("destination", 0, dropRef);
-                    }, 500);
-                  }}
+                  placeholder="Enter your destination"
+                  onChange={(text) => setDropAddress(text)}
+                  onResolve={(result) => handleAddressResolve("destination", result)}
                 />
               </Form.Item>
             </div>
@@ -743,24 +688,17 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
                   { required: true, message: "Please enter a stop location" },
                 ]}
               >
-                <Input
-                  type="text"
-                  size="large"
-                  variant="borderless"
+                <AddressAutocomplete
+                  bordered={false}
                   className="!p-0"
                   value={stop.name}
-                  ref={(el) => { stopRefs.current[index] = el; }}
-                  onChange={(e) => {
+                  placeholder="Enter stop location"
+                  onChange={(text) => {
                     const updatedStops = [...stops];
-                    updatedStops[index].name = e.target.value;
+                    updatedStops[index].name = text;
                     setStops(updatedStops);
                   }}
-                  placeholder={`Enter stop location`}
-                  onFocus={() => {
-                    setTimeout(() => {
-                      initPlaceAPI("stop", index, { current: stopRefs.current[index] });
-                    }, 500);
-                  }}
+                  onResolve={(result) => handleAddressResolve("stop", result, index)}
                 />
               </Form.Item>
             </div>
@@ -877,22 +815,13 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
                   noStyle
                   rules={[{ required: true, message: "Please enter return pickup location" }]}
                 >
-                  <Input
-                    type="text"
-                    ref={returnPickUpRef}
-                    size="large"
-                    variant="borderless"
+                  <AddressAutocomplete
+                    bordered={false}
                     className="!p-0"
                     value={returnPickupAddress}
                     placeholder="Enter pickup location"
-                    onChange={(e) => setReturnPickupAddress(e.target.value)}
-                    onFocus={() => {
-                      setTimeout(() => {
-                        loadGoogleMapScript(() => {
-                          initPlaceAPI("return_pickup", 0, returnPickUpRef);
-                        });
-                      }, 500);
-                    }}
+                    onChange={(text) => setReturnPickupAddress(text)}
+                    onResolve={(result) => handleAddressResolve("return_pickup", result)}
                   />
                 </Form.Item>
               </div>
@@ -912,20 +841,13 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
                   noStyle
                   rules={[{ required: true, message: "Please enter return destination" }]}
                 >
-                  <Input
-                    type="text"
-                    size="large"
-                    variant="borderless"
+                  <AddressAutocomplete
+                    bordered={false}
                     className="!p-0"
-                    placeholder="Enter your destination"
-                    ref={returnDropRef}
                     value={returnDropAddress}
-                    onChange={(e) => setReturnDropAddress(e.target.value)}
-                    onFocus={() => {
-                      setTimeout(() => {
-                        initPlaceAPI("return_destination", 0, returnDropRef);
-                      }, 500);
-                    }}
+                    placeholder="Enter your destination"
+                    onChange={(text) => setReturnDropAddress(text)}
+                    onResolve={(result) => handleAddressResolve("return_destination", result)}
                   />
                 </Form.Item>
               </div>
@@ -944,24 +866,17 @@ const Step1JourneyDetails: React.FC<Step1JourneyDetailsProps> = ({
                   required
                   rules={[{ required: true, message: "Please enter a stop location" }]}
                 >
-                  <Input
-                    type="text"
-                    size="large"
-                    variant="borderless"
+                  <AddressAutocomplete
+                    bordered={false}
                     className="!p-0"
                     value={stop.name}
-                    ref={(el) => { returnStopRefs.current[index] = el; }}
-                    onChange={(e) => {
+                    placeholder="Enter stop location"
+                    onChange={(text) => {
                       const updated = [...returnStops];
-                      updated[index].name = e.target.value;
+                      updated[index].name = text;
                       setReturnStops(updated);
                     }}
-                    placeholder="Enter stop location"
-                    onFocus={() => {
-                      setTimeout(() => {
-                        initPlaceAPI("return_stop", index, { current: returnStopRefs.current[index] });
-                      }, 500);
-                    }}
+                    onResolve={(result) => handleAddressResolve("return_stop", result, index)}
                   />
                 </Form.Item>
               </div>

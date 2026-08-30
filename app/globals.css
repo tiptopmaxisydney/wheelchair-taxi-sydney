@@ -1394,3 +1394,7 @@ img {
 @media (prefers-reduced-motion:reduce){
   .wcb-dt-pop,.wcb-dt-spin-list{transition:none}
 }
+
+.address-section .ant-select-single {
+  height: auto !important;
+}
