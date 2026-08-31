@@ -75,7 +75,7 @@ export const viewport: Viewport = {
 
 const organizationSchema = {
   "@context": "https://schema.org",
-  "@type": ["TravelAgency", "Organization"],
+  "@type": ["TravelAgency", "TaxiService", "LocalBusiness", "Organization"],
   "@id": `${siteConfig.url}/#organization`,
   name: siteConfig.name,
   url: siteConfig.url,
