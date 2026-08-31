@@ -4,6 +4,9 @@ import SplitSection from "@/components/home/SplitSection";
 import FeatureGrid from "@/components/service/FeatureGrid";
 import ServiceAreas from "@/components/home/ServiceAreas";
 import FinalCta from "@/components/home/FinalCta";
+import JsonLd from "@/components/JsonLd";
+import { webPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
+import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "About Us | Wheelchair Taxi Sydney",
@@ -14,8 +17,13 @@ export const metadata: Metadata = {
 };
 
 export default function AboutUsPage() {
+  const url = `${siteConfig.url}/aboutus/`;
+
   return (
     <>
+      <JsonLd data={webPageJsonLd({ url, name: metadata.title as string, description: metadata.description as string })} />
+      <JsonLd data={breadcrumbJsonLd([{ name: "Home", url: siteConfig.url }, { name: "About Us", url }])} />
+
       <ServiceHero
         eyebrow="About Us"
         title="Sydney's Dedicated Wheelchair Taxi Specialists"

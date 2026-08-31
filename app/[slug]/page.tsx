@@ -4,6 +4,7 @@ import ServicePageTemplate from "@/components/service/ServicePageTemplate";
 import BlogPostTemplate from "@/components/blog/BlogPostTemplate";
 import { getServicePages, getServicePage } from "@/lib/servicePages";
 import { getBlogPosts, getBlogPost } from "@/lib/blogPosts";
+import { robotsMeta, isIndexableByStatus } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const [servicePages, blogPosts] = await Promise.all([getServicePages(), getBlogPosts()]);
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: servicePage.metaDescription,
       keywords: [servicePage.navLabel, servicePage.eyebrow, "wheelchair taxi sydney", "wheelchair accessible transport"],
       alternates: { canonical: `/${slug}/` },
+      robots: robotsMeta(servicePage),
     };
   }
   const post = await getBlogPost(slug);
@@ -28,6 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: post.metaDescription,
       keywords: [post.title, "wheelchair taxi sydney blog", "accessible transport"],
       alternates: { canonical: `/${slug}/` },
+      robots: { index: isIndexableByStatus(post), follow: true },
     };
   }
   return {};

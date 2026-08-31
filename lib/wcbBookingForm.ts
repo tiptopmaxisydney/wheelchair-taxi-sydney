@@ -1,5 +1,6 @@
 import { WCBDateTime, parseValue } from "@/lib/wcbDateTime";
 import { trackBookingConversion } from "@/lib/googleAds";
+import { trackEvent } from "@/lib/ga4";
 import { getAttribution, getCurrentPage } from "@/booking-widget/utils/attribution";
 
 /**
@@ -88,6 +89,11 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
   const feedback = form.querySelector<HTMLElement>(".wcb-form-feedback");
   const tripTypeInputs = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="tripType"]'));
   const returnRow = form.querySelector<HTMLElement>(".wcb-return-row");
+  const ndisBookingSelect = form.querySelector<HTMLSelectElement>('select[name="ndisBooking"]');
+  const ndisRow = form.querySelector<HTMLElement>(".wcb-ndis-row");
+  const recurringTripSelect = form.querySelector<HTMLSelectElement>('select[name="recurringTrip"]');
+  const recurringRow = form.querySelector<HTMLElement>(".wcb-recurring-row");
+  const mobilityDeviceSelect = form.querySelector<HTMLSelectElement>('select[name="mobilityDevice"]');
   const pickupInput = form.querySelector<HTMLInputElement>("#pickupAddress");
   const dropoffInput = form.querySelector<HTMLInputElement>("#dropoffAddress");
   const steps = Array.from(form.querySelectorAll<HTMLElement>(".wcb-step"));
@@ -128,6 +134,29 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
     if (!returnRow) return;
     returnRow.hidden = !isReturn;
     if (!isReturn) clearReturn();
+  }
+
+  // ndis/recurring mirror the return-trip show/hide pattern above: the detail row only
+  // appears once the parent Yes/No answers "Yes", and firing the *_enquiry event here
+  // (not just on final submit) captures interest even if the guest abandons the form.
+  function toggleNdis() {
+    if (!ndisRow || !ndisBookingSelect) return;
+    const isYes = ndisBookingSelect.value === "Yes";
+    ndisRow.hidden = !isYes;
+    if (isYes) trackEvent("ndis_enquiry", { source_page: window.location.pathname });
+  }
+
+  function toggleRecurring() {
+    if (!recurringRow || !recurringTripSelect) return;
+    const isYes = recurringTripSelect.value === "Yes";
+    recurringRow.hidden = !isYes;
+    if (isYes) trackEvent("recurring_transport_enquiry", { source_page: window.location.pathname });
+  }
+
+  function trackMobilityDevice() {
+    const value = mobilityDeviceSelect?.value || "";
+    if (value.includes("Powered Wheelchair")) trackEvent("powered_wheelchair_selected", { mobility_device: value });
+    else if (value.includes("Mobility Scooter")) trackEvent("mobility_scooter_selected", { mobility_device: value });
   }
 
   function updateSummary() {
@@ -467,14 +496,26 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
     const dropoffLat = (data.get("dropoffLat") as string) || "";
     const dropoffLng = (data.get("dropoffLng") as string) || "";
 
-    // The API has no fields for mobility device type or a separate
-    // passenger name, so they're folded into notes rather than dropped.
+    // The API has no fields for mobility device type, booking-for/carer/NDIS/recurring
+    // context, or a separate passenger name, so they're folded into notes rather than
+    // dropped. A real recurring-transport workflow needs an actual backend field/lead
+    // category in Nexus, not just a notes string - out of scope for this frontend.
     const mobilityDevice = (data.get("mobilityDevice") as string) || "";
     const passengerName = (data.get("passengerName") as string) || "";
     const driverInstructions = (data.get("driverInstructions") as string) || "";
+    const bookingFor = (data.get("bookingFor") as string) || "";
+    const carerTravelling = (data.get("carerTravelling") as string) || "";
+    const ndisBooking = (data.get("ndisBooking") as string) || "";
+    const ndisManagement = (data.get("ndisManagement") as string) || "";
+    const recurringTrip = (data.get("recurringTrip") as string) || "";
+    const recurringFrequency = (data.get("recurringFrequency") as string) || "";
     const notes = [
       mobilityDevice && `Mobility device: ${mobilityDevice}`,
       passengerName && `Passenger: ${passengerName}`,
+      bookingFor && bookingFor !== "Myself" && `Booking for: ${bookingFor}`,
+      carerTravelling === "Yes" && "Carer/support worker travelling: Yes",
+      ndisBooking === "Yes" && `NDIS booking: Yes (${ndisManagement || "Not sure"})`,
+      recurringTrip === "Yes" && `Recurring trip: Yes${recurringFrequency ? ` (${recurringFrequency})` : ""}`,
       driverInstructions,
     ]
       .filter(Boolean)
@@ -562,6 +603,8 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
         const suffix = reference ? ` Reference: ${reference}.` : "";
         setFeedback(config.messages.success + suffix, "success");
         trackBookingConversion(reference);
+        trackEvent("wheelchair_booking_completed", { booking_id: reference || "" });
+        trackEvent("quote_completed", { booking_id: reference || "" });
       })
       .catch((error: Error) => {
         setFeedback(error.message || config.messages.error, "error");
@@ -576,6 +619,7 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
       const action = button.getAttribute("data-action");
       if (action === "next") {
         if (!stepGateOpen(currentStep)) return;
+        if (currentStep === 0) trackEvent("wheelchair_booking_started", { source_page: window.location.pathname });
         showStep(Math.min(currentStep + 1, steps.length - 1));
       } else if (action === "prev") {
         showStep(Math.max(currentStep - 1, 0));
@@ -587,6 +631,11 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
 
   tripTypeInputs.forEach((input) => input.addEventListener("change", toggleReturn));
   toggleReturn();
+  ndisBookingSelect?.addEventListener("change", toggleNdis);
+  toggleNdis();
+  recurringTripSelect?.addEventListener("change", toggleRecurring);
+  toggleRecurring();
+  mobilityDeviceSelect?.addEventListener("change", trackMobilityDevice);
 
   const navHandlers = navButtons.map((button) => {
     const handler = handleNavClick(button);
@@ -606,6 +655,9 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
 
   return () => {
     tripTypeInputs.forEach((input) => input.removeEventListener("change", toggleReturn));
+    ndisBookingSelect?.removeEventListener("change", toggleNdis);
+    recurringTripSelect?.removeEventListener("change", toggleRecurring);
+    mobilityDeviceSelect?.removeEventListener("change", trackMobilityDevice);
     navHandlers.forEach(({ button, handler }) => button.removeEventListener("click", handler));
     form.removeEventListener("input", updateSummary);
     form.removeEventListener("change", updateSummary);

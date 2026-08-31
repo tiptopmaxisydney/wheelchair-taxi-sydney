@@ -1,9 +1,14 @@
 import type { Faq } from "./homeData";
 import { cmsFindMany, cmsFindOne, mapMedia } from "./cmsClient";
+import { mergeFaqs, type FaqLibraryDoc } from "./faq";
+import { resolveLink, type LinkTarget } from "./links";
+import type { SeoWorkflowDoc } from "./seo";
 
 export type ServiceImage = { src: string; alt: string; width: number; height: number };
+export type ContentSection = { heading?: string; paragraphs: string[]; bulletList: string[] };
+export type RelatedLink = { icon: string; title: string; description: string; href: string };
 
-export type ServicePage = {
+export type ServicePage = SeoWorkflowDoc & {
   slug: string;
   navLabel: string;
   metaTitle: string;
@@ -17,10 +22,13 @@ export type ServicePage = {
   introItemsIntro?: string;
   introItems?: string[];
   features: { title: string; description: string }[];
+  contentSections: ContentSection[];
   faq: Faq[];
+  relatedLinks: RelatedLink[];
+  targetKeyword?: string;
 };
 
-type CmsPageDoc = {
+type CmsPageDoc = SeoWorkflowDoc & {
   slug: string;
   navLabel?: string;
   metaTitle: string;
@@ -34,13 +42,20 @@ type CmsPageDoc = {
   introItemsIntro?: string;
   introItems?: { text: string }[];
   features: { title: string; description: string }[];
+  contentSections?: Array<{ heading?: string; paragraphs?: { text: string }[]; bulletList?: { text: string }[] }>;
   faq: { question: string; answer: string }[];
+  relatedFaqs?: (FaqLibraryDoc | string)[];
+  relatedLinks?: Array<{ icon?: string; title: string; description: string } & LinkTarget>;
+  targetKeyword?: string;
 };
 
 function mapPage(doc: CmsPageDoc): ServicePage {
   const media = mapMedia(doc.image);
   return {
     slug: doc.slug,
+    seoStatus: doc.seoStatus,
+    indexOverride: doc.indexOverride,
+    targetKeyword: doc.targetKeyword,
     navLabel: doc.navLabel ?? "",
     metaTitle: doc.metaTitle,
     metaDescription: doc.metaDescription,
@@ -53,7 +68,13 @@ function mapPage(doc: CmsPageDoc): ServicePage {
     introItemsIntro: doc.introItemsIntro,
     introItems: doc.introItems?.map((i) => i.text),
     features: doc.features,
-    faq: doc.faq,
+    contentSections: (doc.contentSections ?? []).map((s) => ({
+      heading: s.heading,
+      paragraphs: (s.paragraphs ?? []).map((p) => p.text),
+      bulletList: (s.bulletList ?? []).map((b) => b.text),
+    })),
+    faq: mergeFaqs(doc.faq, doc.relatedFaqs ?? []),
+    relatedLinks: (doc.relatedLinks ?? []).map((r) => ({ icon: r.icon || "🔗", title: r.title, description: r.description, href: resolveLink(r) })),
   };
 }
 

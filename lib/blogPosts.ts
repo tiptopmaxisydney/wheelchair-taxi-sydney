@@ -1,8 +1,9 @@
 import { cmsFindMany, cmsFindOne, mapMedia } from "./cmsClient";
+import type { SeoWorkflowDoc } from "./seo";
 
 export type BlogSection = { heading?: string; paragraphs: string[] };
 
-export type BlogPost = {
+export type BlogPost = SeoWorkflowDoc & {
   slug: string;
   title: string;
   metaTitle: string;
@@ -13,7 +14,7 @@ export type BlogPost = {
   sections: BlogSection[];
 };
 
-type CmsBlogPostDoc = {
+type CmsBlogPostDoc = SeoWorkflowDoc & {
   slug: string;
   title: string;
   metaTitle: string;
@@ -28,6 +29,8 @@ function mapPost(doc: CmsBlogPostDoc): BlogPost {
   const media = mapMedia(doc.image);
   return {
     slug: doc.slug,
+    seoStatus: doc.seoStatus,
+    indexOverride: doc.indexOverride,
     title: doc.title,
     metaTitle: doc.metaTitle,
     metaDescription: doc.metaDescription,

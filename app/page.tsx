@@ -9,6 +9,8 @@ import ServiceAreas from "@/components/home/ServiceAreas";
 import Faq from "@/components/home/Faq";
 import AppSection from "@/components/home/AppSection";
 import FinalCta from "@/components/home/FinalCta";
+import JsonLd from "@/components/JsonLd";
+import { webPageJsonLd, faqPageJsonLd } from "@/lib/jsonld";
 import {
   fleetIncludes,
   wheelchairInfoPoints,
@@ -24,20 +26,11 @@ export const metadata: Metadata = {
   description: siteConfig.description,
 };
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqColumns.flat().map((faq) => ({
-    "@type": "Question",
-    name: faq.question,
-    acceptedAnswer: { "@type": "Answer", text: faq.answer },
-  })),
-};
-
 export default function Home() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <JsonLd data={webPageJsonLd({ url: `${siteConfig.url}/`, name: metadata.title as string, description: metadata.description as string })} />
+      <JsonLd data={faqPageJsonLd(faqColumns.flat())} />
 
       <Hero />
       <AboutSection />

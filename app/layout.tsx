@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import StickyCta from "@/components/layout/StickyCta";
 import AttributionTracker from "@/components/AttributionTracker";
 import { siteConfig } from "@/lib/siteConfig";
+import { GA_MEASUREMENT_ID } from "@/lib/ga4";
 
 const lato = Lato({
   variable: "--font-lato",
@@ -125,10 +126,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <StickyCta />
         </AntdRegistry>
 
-        {siteConfig.googleAdsId && (
+        {(siteConfig.googleAdsId || GA_MEASUREMENT_ID) && (
           <>
             <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.googleAdsId}`}
+              src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.googleAdsId || GA_MEASUREMENT_ID}`}
               strategy="afterInteractive"
             />
             <Script id="google-tag" strategy="afterInteractive">
@@ -136,7 +137,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${siteConfig.googleAdsId}');
+                ${siteConfig.googleAdsId ? `gtag('config', '${siteConfig.googleAdsId}');` : ""}
+                ${GA_MEASUREMENT_ID ? `gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: true });` : ""}
               `}
             </Script>
           </>

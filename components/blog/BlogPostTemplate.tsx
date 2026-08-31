@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import FinalCta from "@/components/home/FinalCta";
+import JsonLd from "@/components/JsonLd";
+import { webPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
+import { siteConfig } from "@/lib/siteConfig";
 import type { BlogPost } from "@/lib/blogPosts";
 
 function formatDate(dateStr: string) {
@@ -8,8 +11,19 @@ function formatDate(dateStr: string) {
 }
 
 export default function BlogPostTemplate({ post }: { post: BlogPost }) {
+  const url = `${siteConfig.url}/${post.slug}/`;
+
   return (
     <>
+      <JsonLd data={webPageJsonLd({ url, name: post.metaTitle, description: post.metaDescription })} />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", url: siteConfig.url },
+          { name: "Blog", url: `${siteConfig.url}/blog/` },
+          { name: post.title, url },
+        ])}
+      />
+
       <section className="wt-page-hero">
         <div className="container">
           <div className="wt-page-hero-inner">

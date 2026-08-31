@@ -138,6 +138,72 @@ export default function BookingForm() {
               </select>
             </div>
           </div>
+          <div className="wcb-form-grid">
+            <div className="wcb-form-row">
+              <label className="wcb-label" htmlFor="bookingFor">
+                Who are you booking for?
+                <span className="wcb-optional">(optional)</span>
+              </label>
+              <select id="bookingFor" name="bookingFor" className="wcb-select" defaultValue="Myself">
+                <option value="Myself">Myself</option>
+                <option value="Family member">Family member</option>
+                <option value="Client">Client</option>
+                <option value="Aged care resident">Aged care resident</option>
+                <option value="NDIS participant">NDIS participant</option>
+                <option value="Patient">Patient</option>
+              </select>
+            </div>
+            <div className="wcb-form-row">
+              <label className="wcb-label" htmlFor="carerTravelling">
+                Carer or support worker travelling?
+                <span className="wcb-optional">(optional)</span>
+              </label>
+              <select id="carerTravelling" name="carerTravelling" className="wcb-select" defaultValue="No">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+          <div className="wcb-form-grid">
+            <div className="wcb-form-row">
+              <label className="wcb-label" htmlFor="ndisBooking">
+                NDIS booking?
+                <span className="wcb-optional">(optional)</span>
+              </label>
+              <select id="ndisBooking" name="ndisBooking" className="wcb-select" defaultValue="No">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div className="wcb-form-row wcb-ndis-row" hidden>
+              <label className="wcb-label" htmlFor="ndisManagement">
+                NDIS management type
+              </label>
+              <select id="ndisManagement" name="ndisManagement" className="wcb-select" defaultValue="Not sure">
+                <option value="Self-managed">Self-managed</option>
+                <option value="Plan-managed">Plan-managed</option>
+                <option value="Not sure">Not sure</option>
+              </select>
+            </div>
+          </div>
+          <div className="wcb-form-grid">
+            <div className="wcb-form-row">
+              <label className="wcb-label" htmlFor="recurringTrip">
+                Is this a recurring trip?
+                <span className="wcb-optional">(optional)</span>
+              </label>
+              <select id="recurringTrip" name="recurringTrip" className="wcb-select" defaultValue="No">
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div className="wcb-form-row wcb-recurring-row" hidden>
+              <label className="wcb-label" htmlFor="recurringFrequency">
+                How often?
+              </label>
+              <input id="recurringFrequency" name="recurringFrequency" type="text" placeholder="e.g. Every Monday, weekly therapy" />
+            </div>
+          </div>
           <div className="wcb-form-row">
             <label className="wcb-label" htmlFor="driverInstructions">
               Driver instructions

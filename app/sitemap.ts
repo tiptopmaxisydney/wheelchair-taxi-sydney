@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/siteConfig";
 import { getServicePages } from "@/lib/servicePages";
 import { getBlogPosts } from "@/lib/blogPosts";
+import { isIndexable, isIndexableByStatus } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [servicePages, blogPosts] = await Promise.all([getServicePages(), getBlogPosts()]);
@@ -14,18 +15,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteConfig.url}/cookie-policy/`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  const services: MetadataRoute.Sitemap = servicePages.map((page) => ({
-    url: `${siteConfig.url}/${page.slug}/`,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
+  const services: MetadataRoute.Sitemap = servicePages
+    .filter(isIndexable)
+    .map((page) => ({
+      url: `${siteConfig.url}/${page.slug}/`,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    }));
 
-  const posts: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-    url: `${siteConfig.url}/${post.slug}/`,
-    lastModified: new Date(post.date),
-    changeFrequency: "monthly",
-    priority: 0.5,
-  }));
+  const posts: MetadataRoute.Sitemap = blogPosts
+    .filter(isIndexableByStatus)
+    .map((post) => ({
+      url: `${siteConfig.url}/${post.slug}/`,
+      lastModified: new Date(post.date),
+      changeFrequency: "monthly",
+      priority: 0.5,
+    }));
 
   return [...staticPages, ...services, ...posts];
 }

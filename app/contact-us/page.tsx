@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { FaPhoneAlt, FaRegEnvelope, FaWhatsapp } from "react-icons/fa";
 import ServiceHero from "@/components/service/ServiceHero";
+import JsonLd from "@/components/JsonLd";
+import { webPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
@@ -11,8 +13,13 @@ export const metadata: Metadata = {
 };
 
 export default function ContactUsPage() {
+  const url = `${siteConfig.url}/contact-us/`;
+
   return (
     <>
+      <JsonLd data={webPageJsonLd({ url, name: metadata.title as string, description: metadata.description as string })} />
+      <JsonLd data={breadcrumbJsonLd([{ name: "Home", url: siteConfig.url }, { name: "Contact Us", url }])} />
+
       <ServiceHero
         eyebrow="Get in Touch"
         title="Contact Us"
