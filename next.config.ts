@@ -30,11 +30,32 @@ const nextConfig: NextConfig = {
   },
   // URL restructure (2026-08): transport-solutions-sydney (tiptopmaxisydney.com.au) is the
   // canonical brand for this keyword - this site's duplicate page permanently redirects there.
+  //
+  // Aged-care cluster consolidation (2026-09): these 3 pages duplicated
+  // /aged-care-transport-sydney/'s intent (see the cannibalisation audit). Their unique
+  // content was folded into the canonical page; the CMS docs are soft-retired (noindex,
+  // not deleted - see merge-wheelchair-aged-care-cluster-2026-09.ts in content-hub) so this
+  // is reversible if Search Console data later suggests a different page should have won.
   async redirects() {
     return [
       {
         source: "/western-sydney-airport-wheelchair-taxi/",
         destination: "https://tiptopmaxisydney.com.au/western-sydney-airport-wheelchair-taxi/",
+        permanent: true,
+      },
+      {
+        source: "/aged-care-home-transfers/",
+        destination: "/aged-care-transport-sydney/",
+        permanent: true,
+      },
+      {
+        source: "/nursing-home-transfers/",
+        destination: "/aged-care-transport-sydney/",
+        permanent: true,
+      },
+      {
+        source: "/old-age-home-transfers/",
+        destination: "/aged-care-transport-sydney/",
         permanent: true,
       },
     ];
