@@ -78,6 +78,7 @@ const organizationSchema = {
   "@type": ["TravelAgency", "TaxiService", "LocalBusiness", "Organization"],
   "@id": `${siteConfig.url}/#organization`,
   name: siteConfig.name,
+  legalName: siteConfig.legalName,
   url: siteConfig.url,
   email: siteConfig.email,
   telephone: siteConfig.phoneIntl,
@@ -90,7 +91,16 @@ const organizationSchema = {
     addressCountry: siteConfig.address.country,
   },
   areaServed: { "@type": "City", name: "Sydney" },
-  sameAs: [siteConfig.social.facebook, siteConfig.social.youtube],
+  sameAs: [
+    siteConfig.social.facebook,
+    siteConfig.social.youtube,
+    siteConfig.social.linkedin,
+    siteConfig.apps.appStore,
+    siteConfig.apps.playStore,
+    siteConfig.siblingBrands.tiptopMaxiSydney,
+    siteConfig.siblingBrands.babySeatTaxiSydney,
+    siteConfig.siblingBrands.tiptopRideBooking,
+  ],
 };
 
 const websiteSchema = {

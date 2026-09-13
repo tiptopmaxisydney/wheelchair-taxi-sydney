@@ -15,6 +15,7 @@ export const siteConfig = {
   social: {
     facebook: "https://www.facebook.com/tiptoptransportsolutions/",
     youtube: "https://www.youtube.com/channel/UCgHnPRVHFJXdR6gWBuskwDQ",
+    linkedin: "https://www.linkedin.com/company/tiptoptransport/",
   },
   apps: {
     appStore: "https://apps.apple.com/us/app/tiptop-ride/id6739037902",
@@ -26,5 +27,12 @@ export const siteConfig = {
     region: "NSW",
     postcode: "2170",
     country: "AU",
+  },
+  // Sibling brands under the same TipTop Transport Solutions entity - linked via sameAs in the
+  // Organization schema (app/layout.tsx) so search/AI systems can connect them as one business.
+  siblingBrands: {
+    tiptopMaxiSydney: "https://tiptopmaxisydney.com.au",
+    babySeatTaxiSydney: "https://babyseattaxisydney.com.au",
+    tiptopRideBooking: "https://bookings.tiptopride.com.au",
   },
 } as const;
