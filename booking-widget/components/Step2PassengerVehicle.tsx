@@ -266,21 +266,23 @@ const Step2PassengerVehicle: React.FC<Step2PassengerVehicleProps> = ({
             </div>
           )}
 
-          {showFlightFields && (
-            <div className="w-100 space-y-3">
-              <div className="border border-slate-200 rounded-xl px-3 py-2 transition-colors focus-within:border-[#0d1b2e] focus-within:ring-2 focus-within:ring-[#0d1b2e]/10">
-                <Form.Item className="mb-0" name={'notes'} noStyle>
-                  <TextArea
-                    size="large"
-                    variant="borderless"
-                    className="!p-0"
-                    placeholder="Any Notes"
-                    rows={3}
-                  />
-                </Form.Item>
-              </div>
+          <div className="w-100">
+            <h3 className="fw-semibold mb-2 text-[#0d1b2e]">Notes for your driver <span className="text-sm font-normal text-slate-500">(optional)</span></h3>
+            <div className="border border-slate-200 rounded-xl px-3 py-2 transition-colors focus-within:border-[#0d1b2e] focus-within:ring-2 focus-within:ring-[#0d1b2e]/10">
+              {/* initialValue "" keeps the untouched field defined — the submit check rejects undefined values. */}
+              <Form.Item className="mb-0" name={'notes'} initialValue="" noStyle>
+                <TextArea
+                  size="large"
+                  variant="borderless"
+                  className="!p-0"
+                  placeholder="Anything the driver should know? e.g. gate code, meeting point, wheelchair access details"
+                  rows={3}
+                  maxLength={500}
+                  showCount
+                />
+              </Form.Item>
             </div>
-          )}
+          </div>
         </div>
       )}
     </div>
