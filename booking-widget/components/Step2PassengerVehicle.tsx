@@ -6,6 +6,7 @@ import { PeoplesIcon } from "@/booking-widget/components/icons/PeoplesIcon";
 import ChildSeatIcon from "@/booking-widget/components/icons/ChildSeatIcon";
 import WheelChairIcon from "@/booking-widget/components/icons/WheelChairIcon";
 import BabyCapsule from "@/booking-widget/components/icons/BabyCapsule";
+import PramIcon from "@/booking-widget/components/icons/PramIcon";
 import FlightIcon from "@/booking-widget/components/icons/FlightIcon";
 import ClockIcon from "@/booking-widget/components/icons/ClockIcon";
 import Counter from "@/booking-widget/components/Counter";
@@ -29,8 +30,10 @@ interface Step2PassengerVehicleProps {
   showFlightFields: boolean;
   childSeatCount: number;
   childCapsuleCount: number;
+  pramCount: number;
   onChildSeatChange: (value: number) => void;
   onChildCapsuleChange: (value: number) => void;
+  onPramChange: (value: number) => void;
   airlineOptions: { label: string; options: { value: string; label: string }[] }[];
   airlineOptionsLoading: boolean;
 }
@@ -49,8 +52,10 @@ const Step2PassengerVehicle: React.FC<Step2PassengerVehicleProps> = ({
   showFlightFields,
   childSeatCount,
   childCapsuleCount,
+  pramCount,
   onChildSeatChange,
   onChildCapsuleChange,
+  onPramChange,
   airlineOptions,
   airlineOptionsLoading,
 }) => {
@@ -58,6 +63,7 @@ const Step2PassengerVehicle: React.FC<Step2PassengerVehicleProps> = ({
   const effectiveMaxBabyseat = Number(vehicleInfo?.max_babyseat ?? 2);
   const effectiveMaxBabycapsule = Number(vehicleInfo?.max_babycapsule ?? 2);
   const effectiveMaxWheelchairs = Number(vehicleInfo?.max_wheelchair ?? 2);
+  const effectiveMaxPram = Number(vehicleInfo?.max_pram ?? 2);
 
   const showBabyseat = vehicleInfo?.child_seat_charges != null && effectiveMaxBabyseat > 0;
   const showBabycapsule = vehicleInfo?.child_capsule_charges != null && effectiveMaxBabycapsule > 0;
@@ -68,6 +74,7 @@ const Step2PassengerVehicle: React.FC<Step2PassengerVehicleProps> = ({
   // instance), not `form2`, since booking_transfer_type/transfer_point/arrival
   // date all live there too and the backend expects them together.
   const bookingTransferType = Form.useWatch("booking_transfer_type", form);
+  const notesLength = ((Form.useWatch("notes", form2) as string | undefined) ?? "").length;
   const transferPointValue = Form.useWatch("transfer_point", form);
   const isAirportPickup = bookingTransferType === "airport_transfer" && transferPointValue === "pickup";
 
@@ -133,6 +140,17 @@ const Step2PassengerVehicle: React.FC<Step2PassengerVehicleProps> = ({
               onChange={(value) => {
                 form2.setFieldValue("luggage", value);
               }}
+            />
+            <Counter
+              key={`pram-${effectiveMaxPram}`}
+              name="no_of_pram"
+              label="No. of Prams/Strollers"
+              description={effectiveMaxPram > 0 ? `Maximum ${effectiveMaxPram} · each pram uses one large suitcase slot` : "Not available for this vehicle"}
+              icon={<PramIcon />}
+              initialValue={Math.min(Number(form2.getFieldValue("no_of_pram")) || 0, effectiveMaxPram)}
+              min={0}
+              max={effectiveMaxPram}
+              onChange={onPramChange}
             />
             <Counter
               key={`handbags-${effectiveMaxHandbags}`}
@@ -274,13 +292,13 @@ const Step2PassengerVehicle: React.FC<Step2PassengerVehicleProps> = ({
                 <TextArea
                   size="large"
                   variant="borderless"
-                  className="!p-0"
+                  className="!p-0 !resize-none placeholder:text-slate-300"
                   placeholder="Anything the driver should know? e.g. gate code, meeting point, wheelchair access details"
                   rows={3}
                   maxLength={500}
-                  showCount
                 />
               </Form.Item>
+              <div className="text-right text-xs text-slate-400 select-none">{notesLength}/500</div>
             </div>
           </div>
         </div>

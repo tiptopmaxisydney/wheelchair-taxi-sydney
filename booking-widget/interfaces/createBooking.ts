@@ -27,6 +27,7 @@ export interface IVehicleDetails {
     max_babyseat?: number;
     max_babycapsule?: number;
     max_wheelchair?: number;
+    max_pram?: number;
     airport_toll:any,
     gov_levy:any;
     distance:any;

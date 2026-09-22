@@ -105,6 +105,7 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
   const childSeatCount = watch2?.no_of_childseat || 0;
   const childCapsuleCount = watch2?.no_of_childcapsule || 0;
   const wheelchairCount = watch2?.no_of_wheelchair || 0;
+  const pramCount = watch2?.no_of_pram || 0;
 
   // Dynamic caps driven by wheelchair count
   const maxPassenger =
@@ -112,9 +113,12 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
     wheelchairCount >= 2 ? 3 :
     Number(vehicleInfo?.passenger) || 0;
 
-  const maxLuggage =
+  // Each pram/stroller fitted takes up one large-suitcase slot — no separate charge, just
+  // less room. Applied on top of the wheelchair-driven override above.
+  const baseMaxLuggage =
     wheelchairCount >= 1 ? 7 :
     Number(vehicleInfo?.luggage) || 0;
+  const maxLuggage = Math.max(0, baseMaxLuggage - pramCount);
 
   const handleChildSeatChange = useCallback((newSeatValue: number) => {
     form2.setFieldValue("no_of_childseat", newSeatValue);
@@ -122,6 +126,10 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
 
   const handleChildCapsuleChange = useCallback((newCapsuleValue: number) => {
     form2.setFieldValue("no_of_childcapsule", newCapsuleValue);
+  }, [form2]);
+
+  const handlePramChange = useCallback((newPramValue: number) => {
+    form2.setFieldValue("no_of_pram", newPramValue);
   }, [form2]);
 
   useEffect(() => {
@@ -146,7 +154,7 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
     setSelectedFilters(Array.from(newFilters));
   }, [watch2?.no_of_childseat, watch2?.no_of_wheelchair, watch2?.no_of_childcapsule]);
 
-  // Clamp passenger and luggage whenever wheelchair count changes
+  // Clamp passenger and luggage whenever wheelchair or pram count changes
   useEffect(() => {
     const currentPassenger = Number(form2.getFieldValue("passenger")) || 1;
     const currentLuggage = Number(form2.getFieldValue("luggage")) || 0;
@@ -156,7 +164,7 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
     if (currentLuggage > maxLuggage) {
       form2.setFieldValue("luggage", maxLuggage);
     }
-  }, [wheelchairCount]);
+  }, [wheelchairCount, maxPassenger, pramCount, maxLuggage]);
 
   const handleSelectVehicle = (vehicle: IVehicleDetails) => {
     form.setFieldValue("vehicle_id", vehicle?.vehicle_id?._id);
@@ -239,8 +247,10 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
             showFlightFields={showFlightFields}
             childSeatCount={childSeatCount}
             childCapsuleCount={childCapsuleCount}
+            pramCount={pramCount}
             onChildSeatChange={handleChildSeatChange}
             onChildCapsuleChange={handleChildCapsuleChange}
+            onPramChange={handlePramChange}
             airlineOptions={airlineOptions}
             airlineOptionsLoading={airlineOptionsLoading}
           />
@@ -262,6 +272,7 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
           childSeatCount={childSeatCount}
           childCapsuleCount={childCapsuleCount}
           wheelchairCount={wheelchairCount}
+          pramCount={pramCount}
           airlineOptions={airlineOptions}
           isAgreed={isAgreed}
           setIsAgreed={setIsAgreed}

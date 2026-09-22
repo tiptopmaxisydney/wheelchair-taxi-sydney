@@ -13,6 +13,7 @@ interface Step5ConfirmBookProps {
   childSeatCount: number;
   childCapsuleCount: number;
   wheelchairCount: number;
+  pramCount: number;
   airlineOptions: { label: string; options: { value: string; label: string }[] }[];
   isAgreed: boolean;
   setIsAgreed: (agreed: boolean) => void;
@@ -58,6 +59,7 @@ const Step5ConfirmBook: React.FC<Step5ConfirmBookProps> = ({
   childSeatCount,
   childCapsuleCount,
   wheelchairCount,
+  pramCount,
   airlineOptions,
   isAgreed,
   setIsAgreed,
@@ -146,6 +148,7 @@ const Step5ConfirmBook: React.FC<Step5ConfirmBookProps> = ({
           {childSeatCount > 0 && <SummaryRow label="Child seats" value={childSeatCount} />}
           {childCapsuleCount > 0 && <SummaryRow label="Baby capsules" value={childCapsuleCount} />}
           {wheelchairCount > 0 && <SummaryRow label="Wheelchairs" value={wheelchairCount} />}
+          {pramCount > 0 && <SummaryRow label="Prams/Strollers" value={pramCount} />}
 
           {isAirportPickupBooking && (
             <>
