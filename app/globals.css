@@ -1398,3 +1398,106 @@ img {
 .address-section .ant-select-single {
   height: auto !important;
 }
+/* Contact form (contact page, directly under the hero) */
+.wt-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 48px;
+  align-items: center;
+}
+.wt-contact-title {
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+}
+.wt-contact-intro p {
+  color: var(--wt-muted);
+  max-width: 460px;
+}
+.wt-contact-quick {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  display: grid;
+  gap: 12px;
+}
+.wt-contact-quick li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.wt-contact-quick svg {
+  color: var(--wt-blue);
+  flex-shrink: 0;
+}
+.wt-contact-card {
+  background: #fff;
+  border: 1px solid var(--wt-border);
+  border-radius: var(--wt-radius-lg);
+  padding: 36px;
+  box-shadow: 0 18px 40px rgba(13, 27, 46, 0.08);
+}
+.wt-contact-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.wt-contact-phone {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 8px;
+}
+.wt-contact-full {
+  grid-column: 1 / -1;
+}
+.wt-contact-form input,
+.wt-contact-form select,
+.wt-contact-form textarea {
+  width: 100%;
+  border: 1px solid var(--wt-border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--wt-text);
+  background: #fff;
+  resize: vertical;
+}
+.wt-contact-form select:invalid {
+  color: var(--wt-muted);
+}
+.wt-contact-form input:focus,
+.wt-contact-form select:focus,
+.wt-contact-form textarea:focus {
+  outline: none;
+  border-color: var(--wt-blue);
+  box-shadow: 0 0 0 3px var(--wt-blue-light);
+}
+.wt-contact-form button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+.wt-contact-error {
+  color: #c62828;
+  font-size: 0.9rem;
+  margin: 0;
+}
+.wt-contact-success h3 {
+  font-size: 1.4rem;
+}
+.wt-contact-success p {
+  color: var(--wt-muted);
+}
+@media (max-width: 860px) {
+  .wt-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .wt-contact-card {
+    padding: 24px;
+  }
+  .wt-contact-form {
+    grid-template-columns: 1fr;
+  }
+}

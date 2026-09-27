@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { FaPhoneAlt, FaRegEnvelope, FaWhatsapp } from "react-icons/fa";
-import ServiceHero from "@/components/service/ServiceHero";
 import JsonLd from "@/components/JsonLd";
+import ContactForm from "@/components/ContactForm";
 import { webPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { siteConfig } from "@/lib/siteConfig";
 
@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact-us/" },
 };
 
+const contactServices = [
+  "Wheelchair Taxi",
+  "Airport Transfer",
+  "Hospital / Medical Appointment",
+  "Group Transfer",
+  "General Enquiry",
+];
+
 export default function ContactUsPage() {
   const url = `${siteConfig.url}/contact-us/`;
 
@@ -20,12 +28,7 @@ export default function ContactUsPage() {
       <JsonLd data={webPageJsonLd({ url, name: metadata.title as string, description: metadata.description as string })} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", url: siteConfig.url }, { name: "Contact Us", url }])} />
 
-      <ServiceHero
-        eyebrow="Get in Touch"
-        title="Contact Us"
-        description="Reach our booking team by phone, email or WhatsApp for accessible transport across Sydney."
-        breadcrumbLabel="Contact Us"
-      />
+      <ContactForm title="Contact Wheelchair Taxi Sydney" services={contactServices} />
 
       <section className="wt-section">
         <div className="container">
