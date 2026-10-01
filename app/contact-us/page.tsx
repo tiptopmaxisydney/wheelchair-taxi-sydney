@@ -6,14 +6,14 @@ import { webPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Wheelchair Taxi Sydney",
-  description: "Contact Wheelchair Taxi Sydney by phone, email or WhatsApp to book accessible transport or ask a question.",
+  title: "Contact Us",
+  description: "Contact Accessible Wheelchair Transport Sydney by phone, email or WhatsApp to book accessible transport or ask a question.",
   keywords: ["contact wheelchair taxi sydney", "wheelchair taxi phone number", "book wheelchair taxi sydney"],
   alternates: { canonical: "/contact-us/" },
 };
 
 const contactServices = [
-  "Wheelchair Taxi",
+  "Wheelchair Transport",
   "Airport Transfer",
   "Hospital / Medical Appointment",
   "Group Transfer",
@@ -28,7 +28,7 @@ export default function ContactUsPage() {
       <JsonLd data={webPageJsonLd({ url, name: metadata.title as string, description: metadata.description as string })} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Home", url: siteConfig.url }, { name: "Contact Us", url }])} />
 
-      <ContactForm title="Contact Wheelchair Taxi Sydney" services={contactServices} />
+      <ContactForm title="Contact Our Booking Team" services={contactServices} />
 
       <section className="wt-section">
         <div className="container">

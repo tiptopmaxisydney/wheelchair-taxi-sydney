@@ -7,7 +7,7 @@ export default function ServiceAreas() {
         <span className="wt-eyebrow">Where We Drive</span>
         <h2>Areas We Service Across Sydney</h2>
         <p style={{ maxWidth: 900 }}>
-          Wheelchair Taxi Sydney provides accessible transport throughout Sydney, including Sydney CBD, Eastern
+          Accessible Wheelchair Transport Sydney provides wheelchair accessible transport throughout Sydney, including Sydney CBD, Eastern
           Suburbs, Western Sydney, Northern Sydney, Southern Sydney, Inner West, Parramatta, Blacktown, Liverpool,
           Penrith, Campbelltown, Bankstown and surrounding Sydney suburbs. We also provide longer-distance wheelchair
           transport depending on passenger requirements and vehicle availability.

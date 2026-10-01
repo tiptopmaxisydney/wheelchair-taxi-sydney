@@ -3,10 +3,10 @@ export default function AboutSection() {
     <section className="wt-section">
       <div className="container">
         <span className="wt-eyebrow">About Us</span>
-        <h2>Sydney&apos;s Dedicated Wheelchair Taxi Specialists</h2>
+        <h2>Sydney&apos;s Dedicated Wheelchair Transport Specialists</h2>
         <p style={{ maxWidth: 900 }}>
-          We have been providing wheelchair accessible transport across Sydney for years, servicing Sydney CBD,
-          Sydney Airport and surrounding suburbs. Our experienced drivers are trained to safely assist wheelchair
+          Accessible Wheelchair Transport Sydney provides pre-booked wheelchair accessible transport throughout
+          Sydney, including Sydney CBD, Sydney Airport and surrounding suburbs. Our experienced drivers are trained to safely assist wheelchair
           users, older passengers and people with reduced mobility, ensuring every journey is comfortable, reliable
           and respectful. Our wheelchair accessible vehicles are regularly maintained and comply with applicable NSW
           transport and safety requirements. We proudly provide accessible transport services for private customers,

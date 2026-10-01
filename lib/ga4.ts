@@ -1,4 +1,4 @@
-// GA4 event tracking for Wheelchair Taxi Sydney. gtag.js itself is bootstrapped in
+// GA4 event tracking for wheelchairtaxisydney.com.au. gtag.js itself is bootstrapped in
 // app/layout.tsx (shared with the existing Google Ads tag) - this just fires events onto it.
 declare global {
   interface Window {

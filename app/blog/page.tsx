@@ -5,7 +5,7 @@ import ServiceHero from "@/components/service/ServiceHero";
 import { getBlogPosts } from "@/lib/blogPosts";
 
 export const metadata: Metadata = {
-  title: "Blog | Wheelchair Taxi Sydney",
+  title: "Blog",
   description: "News, guides and helpful information about wheelchair accessible transport, NDIS travel and aged care transfers in Sydney.",
   keywords: ["wheelchair taxi sydney blog", "NDIS transport guides", "accessible transport news"],
   alternates: { canonical: "/blog/" },

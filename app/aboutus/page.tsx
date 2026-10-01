@@ -9,9 +9,9 @@ import { webPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "About Us | Wheelchair Taxi Sydney",
+  title: "About Us",
   description:
-    "Learn about Wheelchair Taxi Sydney, our approach to accessible transport, and how we support passengers, families and organisations across Sydney.",
+    "Learn about Accessible Wheelchair Transport Sydney, our approach to accessible transport, and how we support passengers, families and organisations across Sydney.",
   keywords: ["about wheelchair taxi sydney", "accessible transport provider sydney", "wheelchair taxi company"],
   alternates: { canonical: "/aboutus/" },
 };
@@ -26,7 +26,7 @@ export default function AboutUsPage() {
 
       <ServiceHero
         eyebrow="About Us"
-        title="Sydney's Dedicated Wheelchair Taxi Specialists"
+        title="Sydney's Dedicated Wheelchair Transport Specialists"
         description="Accessible transport built around the needs of each passenger, from everyday trips to important appointments."
         breadcrumbLabel="About Us"
       />
@@ -35,7 +35,7 @@ export default function AboutUsPage() {
         eyebrow="Our Story"
         title="Purpose-Built Accessible Transport"
         paragraphs={[
-          "Wheelchair Taxi Sydney was established to provide dedicated, wheelchair accessible transport across the Sydney metropolitan area. Rather than treating accessibility as an add-on, our vehicles, booking process and driver training are all built around the needs of passengers who use wheelchairs, mobility scooters or other mobility equipment.",
+          "Accessible Wheelchair Transport Sydney was established to provide dedicated, wheelchair accessible transport across the Sydney metropolitan area. Rather than treating accessibility as an add-on, our vehicles, booking process and driver training are all built around the needs of passengers who use wheelchairs, mobility scooters or other mobility equipment.",
           "We work with private passengers, families, aged care providers, hospitals, disability organisations and eligible NDIS participants, adapting our service to the specific requirements of each booking.",
         ]}
         image={{ src: "/images/wheelchair-taxi-booking.png", alt: "Wheelchair Taxi Sydney booking and service overview", width: 600, height: 480 }}
@@ -75,7 +75,7 @@ export default function AboutUsPage() {
           "Eligible NDIS participants, depending on plan management arrangements",
           "Corporate clients and event organisers",
         ]}
-        image={{ src: "/images/organisations-and-customers-we-assist.webp", alt: "Organisations and customers Wheelchair Taxi Sydney assists", width: 600, height: 400 }}
+        image={{ src: "/images/organisations-and-customers-we-assist.webp", alt: "Organisations and customers Accessible Wheelchair Transport Sydney assists", width: 600, height: 400 }}
         background="light"
       />
 

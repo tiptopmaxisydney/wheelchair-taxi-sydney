@@ -108,7 +108,7 @@ export default function ThankYouContent() {
             <>
               <h1>Thank You</h1>
               <p>
-                Thank you for contacting Wheelchair Taxi Sydney. Our booking team has received your request and will
+                Thank you for contacting {siteConfig.name}. Our booking team has received your request and will
                 be in touch shortly to confirm the details of your trip.
               </p>
             </>

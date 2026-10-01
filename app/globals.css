@@ -334,6 +334,9 @@ img {
 }
 .wt-hero-actions {
   margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .wt-hero-live-booking {
   margin-top: 48px;
@@ -719,6 +722,9 @@ img {
   font-size: 0.76rem;
   color: rgba(255, 255, 255, 0.42);
   line-height: 1.7;
+}
+.wt-footer-disclaimer p {
+  margin: 0 0 8px;
 }
 
 /* Sticky CTA (mobile) */

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import ThankYouContent from "@/booking-widget/components/ThankYouContent";
 
 export const metadata: Metadata = {
-  title: "Thank You | Wheelchair Taxi Sydney",
-  description: "Thank you for contacting Wheelchair Taxi Sydney. Our team will be in touch shortly.",
+  title: "Thank You",
+  description: "Thank you for contacting Accessible Wheelchair Transport Sydney. Our team will be in touch shortly.",
   alternates: { canonical: "/thank-you/" },
   robots: { index: false, follow: true },
 };

@@ -25,7 +25,7 @@ export default function ServiceHero({ eyebrow, title, description, breadcrumbLab
               <FaPhoneAlt aria-hidden="true" /> Call Us
             </a>
             <a href="/#tiptop-booking-form" className="wt-btn wt-btn-outline-inverted">
-              Book Now
+              Book Transport
             </a>
             <a href="/#wcb-booking-form" className="wt-btn wt-btn-outline-inverted">
               Get a Quote

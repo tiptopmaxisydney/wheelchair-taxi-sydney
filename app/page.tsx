@@ -22,7 +22,7 @@ import {
 import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Wheelchair Taxi Sydney | Accessible Wheelchair Transport Service",
+  title: "Accessible Wheelchair Transport Sydney | Wheelchair Taxi Sydney",
   description: siteConfig.description,
 };
 
@@ -37,14 +37,14 @@ export default function Home() {
 
       <SplitSection
         eyebrow="Our Service"
-        title="Professional Wheelchair Accessible Taxi Service Sydney"
+        title="Professional Wheelchair Accessible Transport Sydney"
         paragraphs={[
-          "A wheelchair accessible taxi requires careful planning to ensure passengers can travel safely and comfortably. At Wheelchair Taxi Sydney, we provide accessible transport solutions designed around the needs of each passenger.",
+          "Wheelchair accessible transport requires careful planning to ensure every passenger can travel safely and comfortably. At Accessible Wheelchair Transport Sydney, we provide transport solutions designed around each passenger's mobility and accessibility requirements.",
           "When you make a booking, our team confirms your requirements, including wheelchair type, passenger needs and travel details, so we can arrange a suitable vehicle for your journey.",
         ]}
         itemsIntro="Our service includes:"
         items={fleetIncludes}
-        image={{ src: "/images/space-for-carers-and-family-members.webp", alt: "Interior of wheelchair accessible taxi with extra space for carers and family members", width: 600, height: 400 }}
+        image={{ src: "/images/space-for-carers-and-family-members.webp", alt: "Interior of wheelchair accessible vehicle with extra space for carers and family members", width: 600, height: 400 }}
       />
 
       <WhyChooseUs />
@@ -52,13 +52,13 @@ export default function Home() {
       <FleetShowcase />
 
       <SplitSection
-        title="Sydney Airport Wheelchair Taxi Transfers"
+        title="Sydney Airport Wheelchair Accessible Transfers"
         eyebrow="Airport Transfers"
         paragraphs={[
           "Airport travel can be challenging when passengers require wheelchair assistance. Our wheelchair airport transfer service helps passengers travel between Sydney's international and domestic terminals, homes, hotels, hospitals and aged care facilities.",
-          "When booking an airport wheelchair taxi, please provide your pickup location, flight details, number of passengers, wheelchair type and amount of luggage so we can arrange the most suitable vehicle for your journey.",
+          "When booking wheelchair accessible airport transport, please provide your flight details, passenger numbers, wheelchair type and luggage requirements so we can arrange a suitable vehicle.",
         ]}
-        image={{ src: "/images/wheelchair-taxi-sydney.jpg", alt: "Wheelchair taxi Sydney", width: 600, height: 483 }}
+        image={{ src: "/images/wheelchair-taxi-sydney.jpg", alt: "Wheelchair airport transport vehicle in Sydney", width: 600, height: 483 }}
         imageFirst
       />
 
@@ -69,7 +69,7 @@ export default function Home() {
           "Attending medical appointments is an important part of everyday life for many passengers. We provide wheelchair transport for trips to hospitals, medical centres, rehabilitation facilities, specialist appointments and allied health providers.",
           "Whether it is a single appointment or regular transport, our team can assist with planning your journey.",
         ]}
-        image={{ src: "/images/nursing-home-transfer.jpg", alt: "Nursing home transfer", width: 600, height: 400 }}
+        image={{ src: "/images/nursing-home-transfer.jpg", alt: "Wheelchair accessible vehicle for a nursing home transfer", width: 600, height: 400 }}
         background="light"
       />
 
@@ -77,7 +77,7 @@ export default function Home() {
         title="NDIS Wheelchair Transport Sydney"
         eyebrow="NDIS Transport"
         paragraphs={[
-          "Wheelchair Taxi Sydney provides accessible transport options for NDIS participants across Sydney. We support passengers travelling for NDIS appointments, therapy sessions, community participation, education, employment and social activities.",
+          "Accessible Wheelchair Transport Sydney provides wheelchair accessible transport options for NDIS participants across Sydney. We support passengers travelling for NDIS appointments, therapy sessions, community participation, education, employment and social activities.",
           "Our team can discuss your transport requirements and help organise a suitable wheelchair accessible vehicle.",
         ]}
         image={{ src: "/images/aged-care-home-transfers.png", alt: "Aged care home transfers", width: 600, height: 397 }}
@@ -109,7 +109,7 @@ export default function Home() {
         paragraphs={["Booking your wheelchair accessible transport is straightforward."]}
         numbered
         items={bookingSteps}
-        image={{ src: "/images/maxi-van.png", alt: "Maxi van wheelchair taxi", width: 604, height: 310 }}
+        image={{ src: "/images/maxi-van.png", alt: "Accessible van for wheelchair passengers", width: 604, height: 310 }}
         background="light"
       />
 

@@ -42,7 +42,7 @@ export default function Header() {
       <header className="wt-header">
         <div className="wt-header-inner">
           <Link href="/" className="wt-logo" onClick={closeMenu}>
-            <Image src="/images/logo-new.png" alt={siteConfig.name} width={200} height={47} priority />
+            <Image src="/images/logo-new.png" alt={siteConfig.searchName} width={200} height={47} priority />
           </Link>
 
           <nav>
@@ -89,10 +89,10 @@ export default function Header() {
 
           <div className="wt-nav-actions">
             <a href="/#tiptop-booking-form" className="wt-btn wt-btn-primary" onClick={closeMenu}>
-              Book Now
+              Book Transport
             </a>
             <a href="/#wcb-booking-form" className="wt-btn wt-btn-outline" onClick={closeMenu}>
-              Quote
+              Get a Quote
             </a>
             <button
               className="wt-menu-toggle"

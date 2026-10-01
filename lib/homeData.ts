@@ -89,36 +89,36 @@ export const fleetTypes = [
 
 export const serviceAreas = [
   {
-    title: "Wheelchair Taxi Parramatta",
+    title: "Wheelchair Transport Parramatta",
     description: "Accessible transport across Parramatta and the wider Western Sydney business and hospital precinct, with regular runs to Westmead Hospital.",
   },
   {
-    title: "Wheelchair Taxi Blacktown",
-    description: "Reliable wheelchair taxi coverage for Blacktown families, connecting to Blacktown Hospital and surrounding NDIS support services.",
+    title: "Wheelchair Transport Blacktown",
+    description: "Reliable wheelchair accessible transport for Blacktown families, connecting to Blacktown Hospital and surrounding NDIS support services.",
   },
   {
-    title: "Wheelchair Taxi Liverpool",
+    title: "Wheelchair Transport Liverpool",
     description: "Accessible transport throughout Liverpool and South West Sydney, supporting residents attending Liverpool Hospital and local specialists.",
   },
   {
-    title: "Wheelchair Taxi Penrith",
+    title: "Wheelchair Transport Penrith",
     description: "Wheelchair accessible transport across Penrith and the Blue Mountains foothills, built for longer-distance medical and family trips.",
   },
   {
-    title: "Wheelchair Taxi Campbelltown",
-    description: "Dependable wheelchair taxi service for Campbelltown and Macarthur, including transport to Campbelltown Hospital.",
+    title: "Wheelchair Transport Campbelltown",
+    description: "Dependable wheelchair transport for Campbelltown and Macarthur, including transport to Campbelltown Hospital.",
   },
   {
-    title: "Wheelchair Taxi Chatswood",
+    title: "Wheelchair Transport Chatswood",
     description: "Premium accessible transport across Chatswood and the North Shore, ideal for specialist appointments and business travel.",
   },
   {
-    title: "Wheelchair Taxi Bondi",
+    title: "Wheelchair Transport Bondi",
     description: "Comfortable wheelchair accessible rides across Bondi and the Eastern Suburbs, from beachside outings to medical visits.",
   },
   {
-    title: "Wheelchair Taxi Sydney CBD",
-    description: "Fast, professional wheelchair taxi transport through the Sydney CBD, built around traffic conditions and event schedules.",
+    title: "Wheelchair Transport Sydney CBD",
+    description: "Fast, professional wheelchair transport through the Sydney CBD, built around traffic conditions and event schedules.",
   },
 ];
 
@@ -192,7 +192,7 @@ export const faqColumns: Faq[][] = [
       answer: "Yes. We provide wheelchair accessible transfers to and from Sydney's domestic and international terminals.",
     },
     {
-      question: "Can wheelchair taxis transport powered wheelchairs?",
+      question: "Can your vehicles transport powered wheelchairs?",
       answer: "Yes. Just let us know your powered wheelchair's details when booking so we can arrange the right vehicle.",
     },
   ],
@@ -213,13 +213,16 @@ export const faqColumns: Faq[][] = [
 ];
 
 export const footerServices = [
-  { label: "Wheelchair Taxi Service Near Me", href: "/wheelchair-taxi-service-near-me/" },
-  { label: "Wheelchair Accessible Taxi", href: "/wheelchair-accessible-taxi/" },
-  { label: "Wheelchair Taxi Sydney Airport", href: "/wheelchair-taxi-airport-sydney/" },
-  { label: "Wheelchair Taxi Booking Online", href: "/wheelchair-taxi-booking/" },
-  { label: "Disabled Taxi Service", href: "/disabled-taxi-service/" },
-  { label: "Wheelchair Taxi Number", href: "/wheelchair-taxi-number/" },
+  { label: "Hospital Transport", href: "/hospital-transport-sydney/" },
+  { label: "Medical Appointment Transport", href: "/medical-appointment-transport-sydney/" },
+  { label: "Sydney Airport Wheelchair Transport", href: "/wheelchair-taxi-airport-sydney/" },
+  { label: "Aged Care Transport", href: "/aged-care-transport-sydney/" },
+  { label: "NDIS Wheelchair Transport", href: "/ndis-transport-sydney/" },
+  { label: "Wheelchair Accessible Transport", href: "/wheelchair-accessible-taxi/" },
+  { label: "Private Wheelchair Transport", href: "/private-wheelchair-taxi-service/" },
+  { label: "Book Accessible Transport Online", href: "/wheelchair-taxi-booking/" },
 ];
+
 
 export const footerLinks = [
   { label: "About Us", href: "/aboutus/" },

@@ -37,16 +37,22 @@ export default function Hero() {
         <div className="wt-hero-grid">
           <div>
             <div className="wt-hero-eyebrow">Sydney&apos;s Accessible Transport Specialist</div>
-            <h1>Wheelchair Taxi Sydney - Safe and Reliable Accessible Transport</h1>
+            <h1>Accessible Wheelchair Transport Sydney</h1>
             <div id="tiptop-booking-form">
               {showQuote ? <BookingForm /> : <TiptopBookingWidget />}
             </div>
             <p>
-              Professional wheelchair accessible taxi services with trained drivers, safe wheelchair loading, and
-              comfortable transport for medical appointments, airports, hospitals and everyday travel.
+              Professional wheelchair accessible transport with suitable vehicles, experienced drivers and safe
+              wheelchair boarding for medical appointments, airports, hospitals, aged care and everyday journeys.
             </p>
             <div className="wt-hero-actions">
-              <a href={`tel:${siteConfig.phoneIntl}`} className="wt-btn wt-btn-primary">
+              <a href="#tiptop-booking-form" className="wt-btn wt-btn-primary">
+                Book Transport
+              </a>
+              <a href={QUOTE_HASH} className="wt-btn wt-btn-outline">
+                Get a Quote
+              </a>
+              <a href={`tel:${siteConfig.phoneIntl}`} className="wt-btn wt-btn-outline">
                 <FaPhoneAlt aria-hidden="true" /> Call Us
               </a>
             </div>

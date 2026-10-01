@@ -3,8 +3,8 @@ import ServiceHero from "@/components/service/ServiceHero";
 import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Wheelchair Taxi Sydney",
-  description: "Privacy Policy for Wheelchair Taxi Sydney, operated by " + siteConfig.legalName + " Pty Ltd.",
+  title: "Privacy Policy",
+  description: "Privacy Policy for Accessible Wheelchair Transport Sydney, operated by " + siteConfig.legalName + " Pty Ltd.",
   alternates: { canonical: "/privacy-policy/" },
 };
 
@@ -22,7 +22,7 @@ export default function PrivacyPolicyPage() {
         <div className="container">
           <div style={{ maxWidth: 800 }}>
             <p style={{ color: "var(--wt-muted)", fontSize: "0.85rem" }}>
-              This page provides a general outline of how {siteConfig.legalName} Pty Ltd, operator of Wheelchair Taxi Sydney, approaches
+              This page provides a general outline of how {siteConfig.legalName} Pty Ltd, operator of {siteConfig.name} (wheelchairtaxisydney.com.au), approaches
               privacy. It is intended as general information and should be reviewed and confirmed against our current, complete privacy
               policy or by contacting us directly.
             </p>

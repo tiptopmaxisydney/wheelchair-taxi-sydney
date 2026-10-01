@@ -1,9 +1,12 @@
 export const siteConfig = {
-  name: "Wheelchair Taxi Sydney",
+  // Registered business name - the primary visible brand. The domain and email keep the
+  // "Wheelchair Taxi Sydney" search name, exposed to search engines as alternateName.
+  name: "Accessible Wheelchair Transport Sydney",
+  searchName: "Wheelchair Taxi Sydney",
   legalName: "TipTop Transport Solutions",
   url: "https://wheelchairtaxisydney.com.au",
   description:
-    "Book a wheelchair taxi in Sydney for airport, hospital, aged care and NDIS transport. Reliable wheelchair accessible vehicles with professional drivers.",
+    "Accessible Wheelchair Transport Sydney provides safe, reliable wheelchair accessible transport - including wheelchair taxi bookings - for airport, hospital, aged care and NDIS travel across Sydney.",
   phoneLocal: "0296699390",
   phoneLocalDisplay: "(02) 9669 9390",
   phoneIntl: "+61296699390",

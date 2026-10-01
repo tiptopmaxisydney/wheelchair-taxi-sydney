@@ -26,7 +26,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Wheelchair Taxi Sydney | Accessible Wheelchair Transport Service",
+    default: "Accessible Wheelchair Transport Sydney | Wheelchair Taxi Sydney",
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
   creator: siteConfig.name,
   publisher: siteConfig.name,
   openGraph: {
-    title: "Wheelchair Taxi Sydney | NDIS & Airport Transfers | Book 24/7",
+    title: "Accessible Wheelchair Transport Sydney | NDIS & Airport Transfers",
     description:
-      "Book a wheelchair-accessible taxi in Sydney 24/7. NDIS transport, airport transfers, aged care & hospital rides.",
+      "Book wheelchair accessible transport in Sydney. NDIS transport, airport transfers, aged care & hospital trips.",
     url: siteConfig.url,
     siteName: siteConfig.name,
     type: "website",
@@ -78,6 +78,7 @@ const organizationSchema = {
   "@type": ["TravelAgency", "TaxiService", "LocalBusiness", "Organization"],
   "@id": `${siteConfig.url}/#organization`,
   name: siteConfig.name,
+  alternateName: siteConfig.searchName,
   legalName: siteConfig.legalName,
   url: siteConfig.url,
   email: siteConfig.email,
@@ -109,6 +110,7 @@ const websiteSchema = {
   "@id": `${siteConfig.url}/#website`,
   url: siteConfig.url,
   name: siteConfig.name,
+  alternateName: siteConfig.searchName,
   description: siteConfig.description,
   publisher: { "@id": `${siteConfig.url}/#organization` },
   inLanguage: "en-AU",

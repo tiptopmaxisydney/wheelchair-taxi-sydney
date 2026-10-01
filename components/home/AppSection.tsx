@@ -10,11 +10,11 @@ export default function AppSection() {
         <div className="wt-app-wrap">
           <div>
             <span className="wt-eyebrow">Book From Your Phone</span>
-            <h2>Book a Wheelchair Taxi In Seconds With Our App</h2>
+            <h2>Book Wheelchair Accessible Transport From Your Phone</h2>
             <p>
-              Track your driver, save regular pickup addresses, and manage{" "}
-              <Link href="/ndis-transport-sydney/">NDIS</Link> or recurring bookings from your phone &ndash;
-              available on iOS and Android.
+              Track your driver, save regular pickup addresses and manage recurring or{" "}
+              <Link href="/ndis-transport-sydney/">NDIS</Link> accessible transport bookings through the TipTop Ride
+              app &ndash; available on iOS and Android.
             </p>
             <div className="wt-app-buttons">
               <a href={siteConfig.apps.appStore} className="wt-app-btn" target="_blank" rel="noreferrer">
@@ -34,7 +34,7 @@ export default function AppSection() {
           <div>
             <Image
               src="/images/tiptopride-app.webp"
-              alt="Screens from the TipTop Ride app used to book a wheelchair taxi in Sydney"
+              alt="Screens from the TipTop Ride app used to book wheelchair accessible transport in Sydney"
               width={600} height={554}
               loading="lazy"
             />

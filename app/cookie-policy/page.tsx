@@ -3,8 +3,8 @@ import ServiceHero from "@/components/service/ServiceHero";
 import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
-  title: "Cookie Policy | Wheelchair Taxi Sydney",
-  description: "Cookie Policy for the Wheelchair Taxi Sydney website, operated by " + siteConfig.legalName + " Pty Ltd.",
+  title: "Cookie Policy",
+  description: "Cookie Policy for the Accessible Wheelchair Transport Sydney website, operated by " + siteConfig.legalName + " Pty Ltd.",
   alternates: { canonical: "/cookie-policy/" },
 };
 

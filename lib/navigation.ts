@@ -1,49 +1,52 @@
 export type NavLink = { label: string; href: string };
 export type NavGroup = { label: string; links: NavLink[] };
 
+// Visible labels use "transport" terminology; hrefs keep the existing indexed
+// wheelchair-taxi URLs so no redirects are needed.
 export const servicesMenu: NavGroup[] = [
   {
     label: "Airport Transfers",
     links: [
-      { label: "Wheelchair Taxi Sydney Airport", href: "/wheelchair-taxi-airport-sydney/" },
-      { label: "Sydney Domestic Airport Wheelchair Taxi", href: "/sydney-domestic-airport-wheelchair-taxi/" },
-      { label: "Wheelchair Taxi International Airport", href: "/wheelchair-taxi-international-airport/" },
-      { label: "Western Sydney Airport Wheelchair Taxi", href: "/western-sydney-airport-wheelchair-taxi/" },
+      { label: "Sydney Airport Wheelchair Transport", href: "/wheelchair-taxi-airport-sydney/" },
+      { label: "Domestic Airport Accessible Transport", href: "/sydney-domestic-airport-wheelchair-taxi/" },
+      { label: "International Airport Accessible Transport", href: "/wheelchair-taxi-international-airport/" },
+      { label: "Western Sydney Airport Accessible Transport", href: "/western-sydney-airport-wheelchair-taxi/" },
     ],
   },
   {
     label: "Medical & Health Transport",
     links: [
       { label: "Hospital Transport Sydney", href: "/hospital-transport-sydney/" },
-      { label: "Medical Appointment Transport Sydney", href: "/medical-appointment-transport-sydney/" },
-      { label: "Dialysis Transport Sydney", href: "/dialysis-transport-sydney/" },
-      { label: "Rehabilitation Transport Sydney", href: "/rehabilitation-transport-sydney/" },
+      { label: "Medical Appointment Transport", href: "/medical-appointment-transport-sydney/" },
+      { label: "Dialysis Transport", href: "/dialysis-transport-sydney/" },
+      { label: "Rehabilitation Transport", href: "/rehabilitation-transport-sydney/" },
     ],
   },
   {
-    label: "Wheelchair & Accessibility",
+    label: "Wheelchair & Mobility",
     links: [
-      { label: "Wheelchair Taxi for Electric Wheelchairs", href: "/wheelchair-taxi-for-electric-wheelchairs/" },
-      { label: "Wheelchair Taxi for Manual Wheelchairs", href: "/wheelchair-taxi-for-manual-wheelchairs/" },
-      { label: "Wheelchair Taxi for Mobility Scooters", href: "/wheelchair-taxi-for-mobility-scooters/" },
+      { label: "Electric Wheelchair Transport", href: "/wheelchair-taxi-for-electric-wheelchairs/" },
+      { label: "Manual Wheelchair Transport", href: "/wheelchair-taxi-for-manual-wheelchairs/" },
+      { label: "Mobility Scooter Transport", href: "/wheelchair-taxi-for-mobility-scooters/" },
       { label: "Safety & Accessibility", href: "/safety-accessibility/" },
     ],
   },
   {
-    label: "Disability & Community Transport",
+    label: "Disability & Community",
     links: [
-      { label: "NDIS Wheelchair Transport Sydney", href: "/ndis-transport-sydney/" },
-      { label: "TTSS Taxi Sydney", href: "/ttss-taxi-sydney/" },
-      { label: "Aged Care Transport Sydney", href: "/aged-care-transport-sydney/" },
+      { label: "NDIS Wheelchair Transport", href: "/ndis-transport-sydney/" },
+      { label: "Aged Care Transport", href: "/aged-care-transport-sydney/" },
+      { label: "Accessible Transport for People with Disability", href: "/disabled-taxi-service/" },
+      { label: "TTSS Information", href: "/ttss-taxi-sydney/" },
     ],
   },
   {
-    label: "Wheelchair Taxi Services",
+    label: "Wheelchair Transport Services",
     links: [
       { label: "Door-to-Door Wheelchair Transport", href: "/door-to-door-wheelchair-transport/" },
-      { label: "Private Wheelchair Taxi Service", href: "/private-wheelchair-taxi-service/" },
-      { label: "Same-Day Wheelchair Taxi", href: "/same-day-wheelchair-taxi/" },
-      { label: "Advance Wheelchair Taxi Booking", href: "/advance-wheelchair-taxi-booking/" },
+      { label: "Private Wheelchair Transport", href: "/private-wheelchair-taxi-service/" },
+      { label: "Same-Day Accessible Transport", href: "/same-day-wheelchair-taxi/" },
+      { label: "Advance Transport Booking", href: "/advance-wheelchair-taxi-booking/" },
       { label: "Recurring Wheelchair Transport", href: "/recurring-wheelchair-transport-sydney/" },
     ],
   },
@@ -59,13 +62,12 @@ export const servicesMenu: NavGroup[] = [
     ],
   },
   {
-    label: "Wheelchair Taxi Booking",
+    label: "Bookings & Enquiries",
     links: [
-      { label: "Wheelchair Taxi Number", href: "/wheelchair-taxi-number/" },
-      { label: "Wheelchair Accessible Taxi", href: "/wheelchair-accessible-taxi/" },
-      { label: "Wheelchair Taxi Service Near Me", href: "/wheelchair-taxi-service-near-me/" },
-      { label: "Wheelchair Taxi Booking Online", href: "/wheelchair-taxi-booking/" },
-      { label: "Disabled Taxi Service", href: "/disabled-taxi-service/" },
+      { label: "Book Accessible Transport Online", href: "/wheelchair-taxi-booking/" },
+      { label: "Contact Our Booking Team", href: "/wheelchair-taxi-number/" },
+      { label: "Wheelchair Accessible Transport", href: "/wheelchair-accessible-taxi/" },
+      { label: "Accessible Transport Near Me", href: "/wheelchair-taxi-service-near-me/" },
     ],
   },
   {
