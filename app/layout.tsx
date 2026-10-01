@@ -155,6 +155,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Script>
           </>
         )}
+
+        {/* Tealium tag (marketingcenter). Parameters is set before utag.js loads so the tag can read ExternalUid. */}
+        <Script id="tealium-utag" strategy="afterInteractive">
+          {`
+            window.Parameters = window.Parameters || { ExternalUid: 'czs359' };
+            var utag_data = {};
+            (function(a,b,c,d){a='https://tags.tiqcdn.com/utag/marketingcenter/common/prod/utag.js';
+            b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+            a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a); })();
+          `}
+        </Script>
       </body>
     </html>
   );
