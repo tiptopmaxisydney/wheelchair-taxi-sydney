@@ -1,0 +1,53 @@
+name: Deploy wheelchair-taxi-sydney
+
+# main    -> production  (/var/www/wheelchair-taxi-sydney,       PM2 newwheelchairtaxisydney)
+# staging -> staging     (/var/www/stag/wheelchair-taxi-sydney,  PM2 wheelchair-taxi-sydney-stag)
+on:
+  push:
+    branches: [main, staging]
+  workflow_dispatch:
+
+# Never run two deploys of the same environment at the same time
+concurrency:
+  group: deploy-wheelchair-taxi-sydney-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          command_timeout: 30m
+          script: |
+            set -e
+            BRANCH=${{ github.ref_name }}
+            if [ "$BRANCH" = "staging" ]; then
+              APP_DIR=/var/www/stag/wheelchair-taxi-sydney
+              PM2_NAME=wheelchair-taxi-sydney-stag
+              export PATH=/root/.nvm/versions/node/v20.20.2/bin:$PATH   # same Node the staging processes run on
+            elif [ "$BRANCH" = "main" ]; then
+              APP_DIR=/var/www/wheelchair-taxi-sydney
+              PM2_NAME=newwheelchairtaxisydney
+              # Load nvm if Node was installed with it (non-interactive shells skip .bashrc)
+              export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+              export PATH=/root/.nvm/versions/node/v20.20.2/bin:$PATH   # same Node the PM2 process runs on
+            else
+              echo "No deploy target for branch $BRANCH"; exit 1
+            fi
+            echo "Deploying $BRANCH to $APP_DIR ($PM2_NAME) with node $(node -v)"
+
+            cd $APP_DIR
+            git fetch origin $BRANCH
+            git checkout -f -B $BRANCH origin/$BRANCH   # .env / .env.local are untracked, so they are kept
+
+            npm ci
+            npm run build
+
+            pm2 reload $PM2_NAME --update-env
+            pm2 save
