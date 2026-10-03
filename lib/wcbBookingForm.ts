@@ -1,12 +1,14 @@
 import { WCBDateTime, parseValue } from "@/lib/wcbDateTime";
 import { trackBookingConversion } from "@/lib/googleAds";
 import { trackEvent } from "@/lib/ga4";
+import { savedAddress } from "@/lib/savedAddress";
 import { getAttribution, getCurrentPage } from "@/booking-widget/utils/attribution";
 
 /**
  * Port of the wheelchair-booking plugin's wcb-booking-form.js (the live
  * site's booking widget logic): step navigation, per-step validation, and
- * the Google Places autocomplete + service-area gating. The submit step
+ * local-first address autocomplete (saved-address cache on the backend, then
+ * Google Places) + service-area gating. The submit step
  * posts straight to the TipTop Ride dispatch backend's quote endpoint
  * (see wcbConfig.ts) instead of the WordPress REST API the plugin used.
  */
@@ -25,6 +27,7 @@ type WCBMessages = {
   success: string;
   error: string;
   address: string;
+  outsideArea?: string;
   required: string;
   email: string;
   phone: string;
@@ -53,29 +56,42 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_PATTERN = /^\+?[\d\s()\-.]{6,}$/;
 
 type GoogleLatLng = { lat: () => number; lng: () => number };
-type GooglePlace = { formatted_address?: string; name?: string; geometry?: { location?: GoogleLatLng } };
-type GoogleAutocomplete = {
-  getPlace: () => GooglePlace;
-  addListener: (event: "place_changed", handler: () => void) => void;
+type GooglePlace = { place_id?: string; formatted_address?: string; name?: string; geometry?: { location?: GoogleLatLng } };
+type GooglePrediction = { description: string; place_id: string };
+type GoogleAutocompleteService = {
+  getPlacePredictions: (
+    request: {
+      input: string;
+      componentRestrictions: { country: string };
+      types: string[];
+      locationRestriction?: unknown;
+      locationBias?: unknown;
+      sessionToken?: unknown;
+    },
+    callback: (predictions: GooglePrediction[] | null, status: string) => void
+  ) => void;
+};
+type GooglePlacesService = {
+  getDetails: (
+    request: { placeId: string; fields: string[]; sessionToken?: unknown },
+    callback: (place: GooglePlace | null, status: string) => void
+  ) => void;
 };
 type GoogleMapsNamespace = {
   maps: {
     LatLng: new (lat: number, lng: number) => unknown;
     LatLngBounds: new (sw: unknown, ne: unknown) => unknown;
     places: {
-      Autocomplete: new (
-        input: HTMLInputElement,
-        options: {
-          bounds: unknown;
-          strictBounds: boolean;
-          componentRestrictions: { country: string };
-          fields: string[];
-          types: string[];
-        }
-      ) => GoogleAutocomplete;
+      AutocompleteService: new () => GoogleAutocompleteService;
+      PlacesService: new (attributionNode: HTMLElement) => GooglePlacesService;
+      AutocompleteSessionToken: new () => unknown;
     };
   };
 };
+
+type AddressOption =
+  | { source: "local"; id: string; label: string; lat: number; lng: number }
+  | { source: "google"; label: string; placeId: string };
 
 declare global {
   interface Window {
@@ -319,16 +335,26 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
   // the Places Autocomplete API accepts. 111.32 km is one degree of
   // latitude; a degree of longitude shrinks by cos(latitude), so the
   // east/west span is widened to keep the box roughly square on the ground.
-  function serviceBounds(radiusKm: number) {
+  // Cached addresses are checked against the same box, so both sources gate
+  // on the same area.
+  function serviceBox(radiusKm: number) {
     const center = placesConfig.center || { lat: -33.8688, lng: 151.2093 };
     const latSpan = radiusKm / 111.32;
     const lngSpan = latSpan / Math.cos(center.lat * (Math.PI / 180));
-    // Only called once initAutocomplete has confirmed window.google is loaded.
+    return { south: center.lat - latSpan, north: center.lat + latSpan, west: center.lng - lngSpan, east: center.lng + lngSpan };
+  }
+
+  function serviceBounds(radiusKm: number) {
+    const box = serviceBox(radiusKm);
+    // Only called once ensureGoogleServices has confirmed window.google is loaded.
     const maps = window.google!.maps;
-    return new maps.LatLngBounds(
-      new maps.LatLng(center.lat - latSpan, center.lng - lngSpan),
-      new maps.LatLng(center.lat + latSpan, center.lng + lngSpan)
-    );
+    return new maps.LatLngBounds(new maps.LatLng(box.south, box.west), new maps.LatLng(box.north, box.east));
+  }
+
+  function insideServiceArea(lat: number, lng: number, radiusKm: number): boolean {
+    if (placesConfig.strict === false) return true;
+    const box = serviceBox(radiusKm);
+    return lat >= box.south && lat <= box.north && lng >= box.west && lng <= box.east;
   }
 
   // Google sometimes prefixes formatted_address with a plus code
@@ -387,50 +413,232 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
     return false;
   }
 
-  function addAutocomplete(input: HTMLInputElement | null, radiusKm: number) {
-    if (!input || input.getAttribute("data-wcb-autocomplete")) return;
+  // Records a picked address as confirmed, or rejects it when it falls
+  // outside the service area. Returns whether it was accepted.
+  function confirmPlace(input: HTMLInputElement, address: string, lat: number, lng: number, radiusKm: number): boolean {
+    if (!insideServiceArea(lat, lng, radiusKm)) {
+      clearPlace(input);
+      setFeedback(config.messages.outsideArea || config.messages.address, "error");
+      updateSummary();
+      return false;
+    }
+    input.value = address;
+    input.setAttribute("data-wcb-place", address);
+    input.setAttribute("data-wcb-lat", String(lat));
+    input.setAttribute("data-wcb-lng", String(lng));
+    setCoords(input, lat, lng);
+    if (feedback?.classList.contains("is-error")) setFeedback("");
+    updateSummary();
+    return true;
+  }
+
+  // One session token covers a run of predictions plus the details call that
+  // ends it, so Google bills the lookup as a single session.
+  let googleServices: { predictions: GoogleAutocompleteService; details: GooglePlacesService } | null = null;
+  let sessionToken: unknown = null;
+
+  function ensureGoogleServices() {
+    const places = window.google?.maps?.places;
+    if (!places?.AutocompleteService) return null;
+    if (!googleServices) {
+      googleServices = {
+        predictions: new places.AutocompleteService(),
+        details: new places.PlacesService(document.createElement("div")),
+      };
+    }
+    if (!sessionToken) sessionToken = new places.AutocompleteSessionToken();
+    return googleServices;
+  }
+
+  // Local-first address field, same as the transport-solutions site: the
+  // shared saved-address cache on the backend is searched first and Google
+  // only when it has nothing in the service area, and a Google pick is cached
+  // so the next visitor typing it gets it locally (no Google charge).
+  function addAddressField(field: HTMLInputElement | null, radiusKm: number) {
+    if (!field || field.getAttribute("data-wcb-autocomplete")) return;
+    const input = field;
     input.setAttribute("data-wcb-autocomplete", "1");
-    // Only called once initAutocomplete has confirmed window.google is loaded.
-    const autocomplete = new window.google!.maps.places.Autocomplete(input, {
-      bounds: serviceBounds(radiusKm),
-      strictBounds: placesConfig.strict !== false,
-      componentRestrictions: { country: placesConfig.country || "au" },
-      fields: ["formatted_address", "geometry", "name"],
-      types: ["address"],
-    });
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      // No geometry means the text was submitted without picking a
-      // suggestion, so nothing has been confirmed as inside the service area.
-      if (!place || !place.geometry || !place.geometry.location) {
-        clearPlace(input);
-        updateSummary();
+
+    const list = document.createElement("ul");
+    list.className = "wcb-address-options";
+    list.id = input.id + "-options";
+    list.setAttribute("role", "listbox");
+    list.hidden = true;
+    input.insertAdjacentElement("afterend", list);
+    input.setAttribute("role", "combobox");
+    input.setAttribute("aria-autocomplete", "list");
+    input.setAttribute("aria-controls", list.id);
+    input.setAttribute("aria-expanded", "false");
+
+    let options: AddressOption[] = [];
+    let active = -1;
+    let searchId = 0;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    function render() {
+      list.innerHTML = "";
+      options.forEach((option, index) => {
+        const item = document.createElement("li");
+        item.id = list.id + "-" + index;
+        item.className = "wcb-address-option" + (index === active ? " is-active" : "");
+        item.setAttribute("role", "option");
+        item.setAttribute("aria-selected", String(index === active));
+        // S = saved-address cache (our database), G = Google, same badges as
+        // the transport-solutions booking form.
+        const label = document.createElement("span");
+        label.className = "wcb-address-label";
+        label.textContent = option.label;
+        const badge = document.createElement("span");
+        badge.className = "wcb-address-source is-" + option.source;
+        badge.textContent = option.source === "local" ? "S" : "G";
+        badge.title = option.source === "local" ? "Saved address" : "Google";
+        item.append(label, badge);
+        // mousedown, not click, so the input keeps focus and its blur
+        // handler doesn't close the list before the pick lands.
+        item.addEventListener("mousedown", (event) => {
+          event.preventDefault();
+          select(option);
+        });
+        list.appendChild(item);
+      });
+      // Google's terms require attribution wherever its predictions are shown.
+      if (options.some((option) => option.source === "google")) {
+        const credit = document.createElement("li");
+        credit.className = "wcb-address-credit";
+        credit.setAttribute("aria-hidden", "true");
+        credit.textContent = "powered by Google";
+        list.appendChild(credit);
+      }
+      list.hidden = options.length === 0;
+      input.setAttribute("aria-expanded", String(!list.hidden));
+      if (active >= 0) input.setAttribute("aria-activedescendant", list.id + "-" + active);
+      else input.removeAttribute("aria-activedescendant");
+    }
+
+    function close() {
+      active = -1;
+      list.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+    }
+
+    function show(next: AddressOption[]) {
+      options = next;
+      active = -1;
+      render();
+    }
+
+    async function search(text: string) {
+      const id = ++searchId;
+      if (text.trim().length < 2) {
+        show([]);
         return;
       }
-      const address = cleanAddress(place.formatted_address || place.name || input.value);
-      input.value = address;
-      input.setAttribute("data-wcb-place", address);
-      input.setAttribute("data-wcb-lat", String(place.geometry.location.lat()));
-      input.setAttribute("data-wcb-lng", String(place.geometry.location.lng()));
-      setCoords(input, place.geometry.location.lat(), place.geometry.location.lng());
-      if (feedback?.classList.contains("is-error")) setFeedback("");
-      updateSummary();
-    });
+
+      try {
+        const local = await savedAddress.search(text);
+        if (id !== searchId) return;
+        const hits = (local?.data || []).filter((item) => insideServiceArea(item.latitude, item.longitude, radiusKm));
+        if (hits.length > 0) {
+          show(hits.map((item) => ({ source: "local", id: item._id, label: item.display_name, lat: item.latitude, lng: item.longitude })));
+          return;
+        }
+      } catch {
+        // Cache unavailable - fall through to Google
+      }
+      if (id !== searchId) return;
+
+      const services = ensureGoogleServices();
+      if (!services) {
+        show([]);
+        return;
+      }
+      const bounds = serviceBounds(radiusKm);
+      services.predictions.getPlacePredictions(
+        {
+          input: text,
+          componentRestrictions: { country: placesConfig.country || "au" },
+          types: ["address"],
+          ...(placesConfig.strict !== false ? { locationRestriction: bounds } : { locationBias: bounds }),
+          sessionToken,
+        },
+        (predictions, status) => {
+          if (id !== searchId) return;
+          show(
+            status === "OK" && predictions
+              ? predictions.map((p) => ({ source: "google", label: cleanAddress(p.description) || p.description, placeId: p.place_id }))
+              : []
+          );
+        }
+      );
+    }
+
+    function select(option: AddressOption) {
+      close();
+      if (option.source === "local") {
+        if (confirmPlace(input, option.label, option.lat, option.lng, radiusKm)) savedAddress.markUsed(option.id).catch(() => {});
+        return;
+      }
+
+      const services = ensureGoogleServices();
+      if (!services) return;
+      input.value = option.label;
+      services.details.getDetails(
+        { placeId: option.placeId, fields: ["place_id", "formatted_address", "geometry", "name"], sessionToken },
+        (place, status) => {
+          sessionToken = null; // the details call ends the session; the next search starts a new one
+          const location = place?.geometry?.location;
+          if (status !== "OK" || !place || !location) {
+            clearPlace(input);
+            updateSummary();
+            return;
+          }
+          const address = cleanAddress(place.formatted_address || option.label);
+          const lat = location.lat();
+          const lng = location.lng();
+          if (!confirmPlace(input, address, lat, lng, radiusKm)) return;
+          savedAddress
+            .resolve({ place_id: place.place_id, formatted_address: address, latitude: lat, longitude: lng, name: place.name })
+            .catch(() => {});
+        }
+      );
+    }
+
     input.addEventListener("input", () => {
       if (input.value !== input.getAttribute("data-wcb-place")) clearPlace(input);
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => search(input.value), 300);
     });
+    input.addEventListener("focus", () => {
+      if (options.length > 0 && !isConfirmed(input)) render();
+    });
+    input.addEventListener("blur", close);
     input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") event.preventDefault();
+      const open = !list.hidden && options.length > 0;
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (open && active >= 0) select(options[active]);
+      } else if (open && event.key === "ArrowDown") {
+        event.preventDefault();
+        active = (active + 1) % options.length;
+        render();
+      } else if (open && event.key === "ArrowUp") {
+        event.preventDefault();
+        active = active <= 0 ? options.length - 1 : active - 1;
+        render();
+      } else if (open && event.key === "Escape") {
+        close();
+      }
     });
   }
 
+  // The address fields work from the cache straight away; Google is only the
+  // fallback, and only once it has loaded is picking from the list enforced.
   function initAutocomplete() {
-    if (!window.google?.maps?.places?.Autocomplete) {
-      warn("Google Places library did not load, so address autocomplete is unavailable.");
+    if (!window.google?.maps?.places?.AutocompleteService) {
+      warn("Google Places library did not load, so only cached addresses are suggested.");
       return;
     }
-    addAutocomplete(pickupInput, placesConfig.pickupRadiusKm || 50);
-    addAutocomplete(dropoffInput, placesConfig.dropoffRadiusKm || 165);
     placesReady = true;
   }
 
@@ -649,6 +857,8 @@ export function attachBookingForm(form: HTMLFormElement, config: WCBConfig): () 
   form.addEventListener("change", clearFieldError);
   form.addEventListener("submit", handleSubmit);
 
+  addAddressField(pickupInput, placesConfig.pickupRadiusKm || 50);
+  addAddressField(dropoffInput, placesConfig.dropoffRadiusKm || 165);
   loadGooglePlaces();
   showStep(0);
   syncRequiredFlags();

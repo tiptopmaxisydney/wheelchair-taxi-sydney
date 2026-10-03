@@ -35,6 +35,7 @@ export const wcbConfig = {
     error: "We could not submit your request. Please try again or call us directly.",
     address:
       "Please choose the pickup and dropoff addresses from the suggestions so we can confirm they are inside our service area.",
+    outsideArea: "That address is outside our service area. Please call us and we will see what we can arrange.",
     required: "Please complete the highlighted fields before continuing.",
     email: "Please enter a valid email address so we can send your quote.",
     phone: "Please enter a valid contact phone number.",

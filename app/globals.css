@@ -1001,6 +1001,44 @@ img {
     box-shadow:0 0 0 3px rgba(29,105,180,.16);
 }
 .wcb-booking-form textarea{resize:vertical;min-height:76px}
+
+/* Address suggestions (cached addresses first, then Google) - see wcbBookingForm.ts.
+   The input is the last visible item in its row, so 100% is its bottom edge. */
+.wcb-form-row:has(.wcb-address-options){position:relative}
+.wcb-address-options{
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    z-index:30;
+    margin:4px 0 0;
+    padding:4px;
+    list-style:none;
+    background:#fff;
+    border:1px solid var(--wcb-border);
+    border-radius:var(--wcb-radius);
+    box-shadow:0 10px 24px rgba(29,54,73,.14);
+    max-height:260px;
+    overflow-y:auto;
+}
+.wcb-address-options[hidden]{display:none}
+.wcb-address-option{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    padding:9px 10px;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:.92em;
+    line-height:1.35;
+    color:var(--wcb-text);
+}
+.wcb-address-option:hover,.wcb-address-option.is-active{background:var(--wcb-surface);color:var(--wcb-dark)}
+.wcb-address-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wcb-address-source{flex-shrink:0;padding:2px 6px;border-radius:999px;font-size:10px;font-weight:700;line-height:1.4}
+.wcb-address-source.is-local{background:#dcfce7;color:#15803d}
+.wcb-address-source.is-google{background:#dbeafe;color:#1d4ed8}
 .wcb-booking-form ::placeholder{color:#9aa8bd}
 
 .wcb-radio-group{
