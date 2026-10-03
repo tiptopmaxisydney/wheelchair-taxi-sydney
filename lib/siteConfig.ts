@@ -2,8 +2,8 @@ export const siteConfig = {
   // Registered business name - the primary visible brand. The domain and email keep the
   // "Wheelchair Taxi Sydney" search name, exposed to search engines as alternateName.
   name: "Accessible Wheelchair Transport Sydney",
-  searchName: "Wheelchair Taxi Sydney",
-  legalName: "TipTop Transport Solutions",
+  searchName: "Accessible Wheelchair Transport Sydney",
+  legalName: "Accessible Wheelchair Transport Sydney",
   url: "https://wheelchairtaxisydney.com.au",
   description:
     "Accessible Wheelchair Transport Sydney provides safe, reliable wheelchair accessible transport - including wheelchair taxi bookings - for airport, hospital, aged care and NDIS travel across Sydney.",
@@ -16,7 +16,7 @@ export const siteConfig = {
   googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "",
   googleAdsId: process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "",
   social: {
-    facebook: "https://www.facebook.com/tiptoptransportsolutions/",
+    facebook: "https://www.facebook.com/profile.php?id=61594635390653",
     youtube: "https://www.youtube.com/channel/UCgHnPRVHFJXdR6gWBuskwDQ",
     linkedin: "https://www.linkedin.com/company/tiptoptransport/",
   },

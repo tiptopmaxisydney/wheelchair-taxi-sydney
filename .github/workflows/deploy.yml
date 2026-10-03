@@ -47,7 +47,14 @@ jobs:
             git checkout -f -B $BRANCH origin/$BRANCH   # .env / .env.local are untracked, so they are kept
 
             npm ci
-            npm run build
+            # Keep the live build so a failed build doesn't leave the running site broken
+            rm -rf .next.prev; [ -d .next ] && cp -a .next .next.prev
+            if ! npm run build; then
+              echo "Build failed - restoring previous build, live site left as is"
+              rm -rf .next; [ -d .next.prev ] && mv .next.prev .next
+              exit 1
+            fi
+            rm -rf .next.prev
 
             pm2 reload $PM2_NAME --update-env
             pm2 save

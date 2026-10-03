@@ -8,6 +8,10 @@ const SITE_KEY = "wheelchair";
 // The CMS also pings /api/revalidate on publish for near-immediate updates - this is the fallback.
 const REVALIDATE_SECONDS = 3600;
 
+// 5xx / network errors are retried with these delays - the CMS is briefly unavailable while
+// it redeploys, and a site build shouldn't fail because both deployed at the same time.
+const RETRY_DELAYS_MS = [2000, 5000, 10000, 20000];
+
 export type CmsMedia = { url: string; alt: string; width: number; height: number };
 
 type PayloadListResponse<T> = { docs: T[] };
@@ -16,9 +20,18 @@ async function cmsFetch<T>(path: string, searchParams: Record<string, string>): 
   const url = new URL(`/api/${path}`, CMS_URL);
   for (const [key, value] of Object.entries(searchParams)) url.searchParams.set(key, value);
 
-  const res = await fetch(url, { next: { revalidate: REVALIDATE_SECONDS, tags: [path] } });
-  if (!res.ok) throw new Error(`CMS request failed: ${path} (${res.status})`);
-  return res.json() as Promise<T>;
+  for (let attempt = 0; ; attempt++) {
+    const retriesLeft = attempt < RETRY_DELAYS_MS.length;
+    try {
+      const res = await fetch(url, { next: { revalidate: REVALIDATE_SECONDS, tags: [path] } });
+      if (res.ok) return (await res.json()) as T;
+      if (res.status < 500 || !retriesLeft) throw new Error(`CMS request failed: ${path} (${res.status})`);
+    } catch (err) {
+      // Our own 4xx / final-attempt error rethrows; network errors fall through to a retry
+      if (!retriesLeft || (err instanceof Error && err.message.startsWith("CMS request failed"))) throw err;
+    }
+    await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt]));
+  }
 }
 
 export async function cmsFindMany<T>(collection: string, extraWhere: Record<string, string> = {}): Promise<T[]> {
