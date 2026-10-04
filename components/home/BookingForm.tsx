@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { attachDateTimePickers } from "@/lib/wcbDateTime";
 import { attachBookingForm } from "@/lib/wcbBookingForm";
 import { wcbConfig } from "@/lib/wcbConfig";
+import EmailSuggestInput from "@/components/EmailSuggestInput";
 
 export default function BookingForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -227,7 +228,7 @@ export default function BookingForm() {
                 Email
                 <span className="wcb-req" aria-hidden="true">*</span>
               </label>
-              <input id="customerEmail" name="customerEmail" type="email" autoComplete="email" required />
+              <EmailSuggestInput id="customerEmail" name="customerEmail" required accentColor="#0d1b2e" />
             </div>
             <div className="wcb-form-row">
               <label className="wcb-label" htmlFor="customerPhone">

@@ -6,6 +6,7 @@ import { EmailIcon } from "@/booking-widget/components/icons/EmailIcon";
 import { Form, FormInstance, Input, Select } from "antd";
 import FormFieldError from "@/booking-widget/components/FormFieldError";
 import CountryCode from "@/booking-widget/utils/countryCode.json";
+import EmailAutocomplete, { EmailTypoHint } from "@/booking-widget/components/EmailAutocomplete";
 
 const countryCodeOption = CountryCode?.filter(
   (item, index, self) =>
@@ -23,6 +24,7 @@ interface Step4YourDetailsProps {
 }
 
 const Step4YourDetails: React.FC<Step4YourDetailsProps> = ({ form }) => {
+  const watchedEmail = Form.useWatch("email", form);
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
@@ -129,15 +131,16 @@ const Step4YourDetails: React.FC<Step4YourDetailsProps> = ({ form }) => {
           noStyle
           rules={[{ required: true, message: "Please enter email" }]}
         >
-          <Input
-            type="email"
+          <EmailAutocomplete
             size="large"
             variant="borderless"
             placeholder="Email*"
             className="!p-0 placeholder-gray-500 text-base"
+            showTypoHint={false}
           />
         </Form.Item>
       </div>
+      <EmailTypoHint value={watchedEmail} onPick={(v) => { form.setFieldValue("email", v); form.validateFields(["email"]).catch(() => {}); }} />
       <FormFieldError form={form} name="email" />
     </div>
   );

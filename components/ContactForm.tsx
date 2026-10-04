@@ -5,6 +5,7 @@ import { FaPhoneAlt, FaRegEnvelope, FaWhatsapp } from "react-icons/fa";
 import { sendContactMessage, type ContactPayload } from "@/lib/contactApi";
 import { siteConfig } from "@/lib/siteConfig";
 import CountryCode from "@/booking-widget/utils/countryCode.json";
+import EmailSuggestInput from "@/components/EmailSuggestInput";
 
 // Same de-duplication as the booking widget's Step4YourDetails (e.g. +1 US/Canada).
 const dialCodes = CountryCode.filter(
@@ -102,14 +103,14 @@ export default function ContactForm({ services, title }: ContactFormProps) {
             ) : (
               <form className="wt-contact-form" onSubmit={handleSubmit}>
                 <input name="name" value={form.name} onChange={handleChange} required placeholder="Full name" aria-label="Full name" />
-                <input
-                  type="email"
+                <EmailSuggestInput
                   name="email"
                   value={form.email}
                   onChange={handleChange}
                   required
                   placeholder="Email Address"
                   aria-label="Email Address"
+                  accentColor="#0d1b2e"
                 />
                 <div className="wt-contact-phone">
                   <select value={dialCode} onChange={(e) => setDialCode(e.target.value)} aria-label="Country code">
