@@ -397,8 +397,11 @@ export default function TiptopBookingForm() {
         travelMode: google.maps.TravelMode.DRIVING,
       });
 
-      if (response.rows[0]?.elements[0]?.distance) {
-        return response.rows[0].elements[0].distance.value / 1000; // Convert meters to kilometers
+      const element = response.rows[0]?.elements[0];
+      // Driving time (seconds) — shown as "x mins" in the wizard's "Your transfer" panel.
+      setDurationMins(element?.duration?.value ? Math.round(element.duration.value / 60) : 0);
+      if (element?.distance) {
+        return element.distance.value / 1000; // Convert meters to kilometers
       }
       return 0;
     } catch (error) {
@@ -408,6 +411,7 @@ export default function TiptopBookingForm() {
   };
 
   const [distance, setDistance] = useState<number>(0);
+  const [durationMins, setDurationMins] = useState<number>(0);
 
   useEffect(() => {
     const calculateDistance = async () => {
@@ -443,6 +447,9 @@ export default function TiptopBookingForm() {
               setCurrentStep={setCurrentStep}
               onSetDetailsData={handleSetDetailsData}
               onSubmit={() => form.submit()}
+              stops={bookingFormData?.stops}
+              distanceKm={distance}
+              durationMins={durationMins}
             />
             {distance ? <p className="mt-3 text-sm text-gray-500">The total distance is {distance?.toFixed(2)} km</p> : null}
           </Form>

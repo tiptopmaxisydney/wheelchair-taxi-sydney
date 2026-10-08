@@ -64,7 +64,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
       <div className="hidden sm:block w-px bg-slate-100 self-stretch" />
 
-      <div className="flex-1 flex flex-col justify-center gap-1.5 text-sm text-slate-600 w-full [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-shrink-0">
+      <div className="flex-1 flex flex-col sm:grid sm:grid-cols-2 sm:content-center gap-x-4 gap-y-1.5 text-sm text-slate-600 w-full min-w-0 [&_svg]:w-4 [&_svg]:h-4 [&_svg]:flex-shrink-0">
         <div className="flex items-center gap-2">
           <PeoplesIcon />
           <span>{passenger} passengers</span>

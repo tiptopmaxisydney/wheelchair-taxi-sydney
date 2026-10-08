@@ -11,6 +11,8 @@ import Step2PassengerVehicle from "./Step2PassengerVehicle";
 import Step4YourDetails from "./Step4YourDetails";
 import Step5ConfirmBook from "./Step5ConfirmBook";
 import PolicyDrawers from "./PolicyDrawers";
+import BookingSummaryPanel from "./BookingSummaryPanel";
+import { Stop } from "./Step1JourneyDetails";
 
 interface BookingWizardProps {
   form: FormInstance;
@@ -25,6 +27,9 @@ interface BookingWizardProps {
   setCurrentStep: (step: number) => void;
   onSetDetailsData: (value: any) => void;
   onSubmit: () => void;
+  stops?: Stop[];
+  distanceKm?: number;
+  durationMins?: number;
 }
 
 const BookingWizard: React.FC<BookingWizardProps> = ({
@@ -40,6 +45,9 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
   setCurrentStep,
   onSetDetailsData,
   onSubmit,
+  stops,
+  distanceKm,
+  durationMins,
 }) => {
   const selectedVehicleId = Form.useWatch("vehicle_id", form);
   const vehicleInfo = vehicleDetails.find(
@@ -216,11 +224,16 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
   };
 
   const isBookDisabled = !isAgreed;
+  const showSummary = currentStep === 2 || currentStep === 3;
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 md:p-6">
       <StepIndicator currentStep={currentStep} />
 
+      {/* Steps 2–3: the step on the left, "Your transfer" (earlier choices) on the right.
+          Step 4 (Confirm) already shows the full summary, so it keeps the full width. */}
+      <div className={showSummary ? "grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_260px] md:items-start lg:grid-cols-[minmax(0,1fr)_300px]" : ""}>
+      <div className="min-w-0">
       <div className={currentStep === 1 ? "" : "hidden"}>
         <Step1JourneyDetails
           form={form}
@@ -279,6 +292,29 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
           onOpenTerms={() => setIsTermsOpen(true)}
           onOpenRefund={() => setIsRefundOpen(true)}
         />
+      </div>
+      </div>
+
+      {showSummary && (
+        <BookingSummaryPanel
+          currentStep={currentStep}
+          form={form}
+          form2={form2}
+          vehicleInfo={vehicleInfo}
+          isReturnTrip={isReturnTrip}
+          isAirportTransfer={isAirportTransfer}
+          isAirportPickupBooking={isAirportPickupBooking}
+          stops={stops}
+          distanceKm={distanceKm}
+          durationMins={durationMins}
+          childSeatCount={childSeatCount}
+          childCapsuleCount={childCapsuleCount}
+          wheelchairCount={wheelchairCount}
+          pramCount={pramCount}
+          airlineOptions={airlineOptions}
+          onEditStep={setCurrentStep}
+        />
+      )}
       </div>
 
       <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100">
