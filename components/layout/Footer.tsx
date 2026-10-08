@@ -97,7 +97,7 @@ export default function Footer() {
       </div>
 
       <div className="wt-footer-bottom">
-        Copyright © {year} {siteConfig.legalName} Pty Ltd
+        Copyright © {year} {siteConfig.legalName}
       </div>
     </footer>
   );

@@ -4,7 +4,7 @@ import { siteConfig } from "@/lib/siteConfig";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
-  description: "Cookie Policy for the Accessible Wheelchair Transport Sydney website, operated by " + siteConfig.legalName + " Pty Ltd.",
+  description: "Cookie Policy for the Accessible Wheelchair Transport Sydney website, operated by " + siteConfig.legalName + ".",
   alternates: { canonical: "/cookie-policy/" },
 };
 
