@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { STRIPE_ACCESS_KEY } from "@/booking-widget/utils/api";
 import { siteConfig } from "@/lib/siteConfig";
+import GoogleReview from "@/components/GoogleReview";
 
 interface BookingSummary {
   pickup_address?: string;
@@ -81,6 +82,7 @@ export default function ThankYouContent() {
   const isBookingPayment = !!booking; // distinguishes a paid booking from the plain "contact us" thank-you
 
   return (
+    <>
     <section className="wt-page-hero" style={{ minHeight: "50vh", display: "flex", alignItems: "center" }}>
       <div className="container">
         <div className="wt-page-hero-inner mx-auto text-center">
@@ -202,5 +204,15 @@ export default function ThankYouContent() {
         </div>
       </div>
     </section>
+
+    {/* Google Review — booking confirmation / thank-you page */}
+    {paymentStatus !== "failed" && (
+      <section className="wt-section">
+        <div className="container">
+          <GoogleReview variant="card" />
+        </div>
+      </section>
+    )}
+    </>
   );
 }

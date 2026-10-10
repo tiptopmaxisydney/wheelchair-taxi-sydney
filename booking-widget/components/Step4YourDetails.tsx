@@ -3,7 +3,7 @@
 import PassengerIcon from "@/booking-widget/components/icons/PassengerIcon";
 import CallIcon from "@/booking-widget/components/icons/CallIcon";
 import { EmailIcon } from "@/booking-widget/components/icons/EmailIcon";
-import { Form, FormInstance, Input, Select } from "antd";
+import { Checkbox, Form, FormInstance, Input, Select } from "antd";
 import FormFieldError from "@/booking-widget/components/FormFieldError";
 import CountryCode from "@/booking-widget/utils/countryCode.json";
 import EmailAutocomplete, { EmailTypoHint } from "@/booking-widget/components/EmailAutocomplete";
@@ -142,6 +142,15 @@ const Step4YourDetails: React.FC<Step4YourDetailsProps> = ({ form }) => {
       </div>
       <EmailTypoHint value={watchedEmail} onPick={(v) => { form.setFieldValue("email", v); form.validateFields(["email"]).catch(() => {}); }} />
       <FormFieldError form={form} name="email" />
+
+      {/* Opt-in for business WhatsApp messages (trip updates + Google Review request). Must
+          default to false — the booking submit rejects any undefined Step 4 value. */}
+      <Form.Item name="whatsapp_consent" valuePropName="checked" initialValue={false} className="mb-0 mt-3">
+        <Checkbox className="text-sm text-slate-600">
+          I agree to receive booking updates and a feedback request on WhatsApp from Accessible Wheelchair
+          Transport Sydney (+61 410 025 786).
+        </Checkbox>
+      </Form.Item>
     </div>
   );
 };

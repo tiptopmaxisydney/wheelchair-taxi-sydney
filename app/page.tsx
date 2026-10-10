@@ -9,6 +9,7 @@ import ServiceAreas from "@/components/home/ServiceAreas";
 import Faq from "@/components/home/Faq";
 import AppSection from "@/components/home/AppSection";
 import FinalCta from "@/components/home/FinalCta";
+import GoogleReview from "@/components/GoogleReview";
 import JsonLd from "@/components/JsonLd";
 import { webPageJsonLd, faqPageJsonLd } from "@/lib/jsonld";
 import {
@@ -135,6 +136,7 @@ export default function Home() {
       <ServiceAreas />
       <Faq />
       <AppSection />
+      <GoogleReview />
       <FinalCta />
     </>
   );

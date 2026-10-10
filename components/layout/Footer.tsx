@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FaFacebookF, FaYoutube, FaMapMarkerAlt, FaRegEnvelope, FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
 import { siteConfig } from "@/lib/siteConfig";
 import { footerServices, footerLinks } from "@/lib/homeData";
+import GoogleReview from "@/components/GoogleReview";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -27,6 +28,7 @@ export default function Footer() {
                 <FaYoutube aria-hidden="true" />
               </a>
             </div>
+            <GoogleReview variant="footer" />
           </div>
 
           <div>
