@@ -262,6 +262,17 @@ img {
   transform: translateX(-50%) translateY(8px);
   transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
 }
+/* Desktop: the 8 service groups make the dropdown taller than shorter
+   screens, cutting off the bottom row (Sydney Locations). Cap it to the
+   viewport and scroll inside the panel. Desktop-only so the mobile
+   accordion (height 0 / auto rules below 1024px) is untouched. */
+@media (min-width: 1025px) {
+  .wt-mega {
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
 .wt-nav > li:hover .wt-mega,
 .wt-nav > li.has-open .wt-mega {
   opacity: 1;
