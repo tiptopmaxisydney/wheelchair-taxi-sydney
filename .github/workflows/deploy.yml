@@ -17,44 +17,61 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy over SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          command_timeout: 30m
-          script: |
-            set -e
-            BRANCH=${{ github.ref_name }}
-            if [ "$BRANCH" = "staging" ]; then
-              APP_DIR=/var/www/stag/wheelchair-taxi-sydney
-              PM2_NAME=wheelchair-taxi-sydney-stag
-              export PATH=/root/.nvm/versions/node/v20.20.2/bin:$PATH   # same Node the staging processes run on
-            elif [ "$BRANCH" = "main" ]; then
-              APP_DIR=/var/www/wheelchair-taxi-sydney
-              PM2_NAME=newwheelchairtaxisydney
-              # Load nvm if Node was installed with it (non-interactive shells skip .bashrc)
-              export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-              export PATH=/root/.nvm/versions/node/v20.20.2/bin:$PATH   # same Node the PM2 process runs on
-            else
-              echo "No deploy target for branch $BRANCH"; exit 1
-            fi
-            echo "Deploying $BRANCH to $APP_DIR ($PM2_NAME) with node $(node -v)"
+        # Plain ssh from the runner (openssh is preinstalled). appleboy/ssh-action downloaded a
+        # binary from GitHub releases on every run, and a 504 there failed the whole deploy.
+        timeout-minutes: 30
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT || 22 }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
 
-            cd $APP_DIR
-            git fetch origin $BRANCH
-            git checkout -f -B $BRANCH origin/$BRANCH   # .env / .env.local are untracked, so they are kept
+          # Script that runs on the server
+          {
+            cat <<'DEPLOY_SCRIPT'
+          set -e
+          BRANCH=${{ github.ref_name }}
+          if [ "$BRANCH" = "staging" ]; then
+            APP_DIR=/var/www/stag/wheelchair-taxi-sydney
+            PM2_NAME=wheelchair-taxi-sydney-stag
+            export PATH=/root/.nvm/versions/node/v20.20.2/bin:$PATH   # same Node the staging processes run on
+          elif [ "$BRANCH" = "main" ]; then
+            APP_DIR=/var/www/wheelchair-taxi-sydney
+            PM2_NAME=newwheelchairtaxisydney
+            # Load nvm if Node was installed with it (non-interactive shells skip .bashrc)
+            export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            export PATH=/root/.nvm/versions/node/v20.20.2/bin:$PATH   # same Node the PM2 process runs on
+          else
+            echo "No deploy target for branch $BRANCH"; exit 1
+          fi
+          echo "Deploying $BRANCH to $APP_DIR ($PM2_NAME) with node $(node -v)"
 
-            npm ci
-            # Keep the live build so a failed build doesn't leave the running site broken
-            rm -rf .next.prev; [ -d .next ] && cp -a .next .next.prev
-            if ! npm run build; then
-              echo "Build failed - restoring previous build, live site left as is"
-              rm -rf .next; [ -d .next.prev ] && mv .next.prev .next
-              exit 1
-            fi
-            rm -rf .next.prev
+          cd $APP_DIR
+          git fetch origin $BRANCH
+          git checkout -f -B $BRANCH origin/$BRANCH   # .env / .env.local are untracked, so they are kept
 
-            pm2 reload $PM2_NAME --update-env
-            pm2 save
+          npm ci
+          # Keep the live build so a failed build doesn't leave the running site broken
+          rm -rf .next.prev; [ -d .next ] && cp -a .next .next.prev
+          if ! npm run build; then
+            echo "Build failed - restoring previous build, live site left as is"
+            rm -rf .next; [ -d .next.prev ] && mv .next.prev .next
+            exit 1
+          fi
+          rm -rf .next.prev
+
+          pm2 reload $PM2_NAME --update-env
+          pm2 save
+          DEPLOY_SCRIPT
+          } > deploy.sh
+
+          # Upload to a temp file and run it with stdin closed, so nothing in the script can swallow it
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+            -o StrictHostKeyChecking=accept-new -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            "$SSH_USER@$SSH_HOST" \
+            'f=$(mktemp); cat > "$f"; bash "$f" < /dev/null; rc=$?; rm -f "$f"; exit $rc' < deploy.sh
