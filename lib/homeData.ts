@@ -220,6 +220,7 @@ export const footerServices = [
   { label: "NDIS Wheelchair Transport", href: "/ndis-transport-sydney/" },
   { label: "Wheelchair Accessible Transport", href: "/wheelchair-accessible-taxi/" },
   { label: "Private Wheelchair Transport", href: "/private-wheelchair-taxi-service/" },
+  { label: "Northern Beaches Wheelchair Taxi", href: "/northern-beaches-wheelchair-taxi/" },
   { label: "Book Accessible Transport Online", href: "/wheelchair-taxi-booking/" },
 ];
 
