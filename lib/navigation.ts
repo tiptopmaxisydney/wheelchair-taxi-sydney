@@ -83,6 +83,7 @@ export const servicesMenu: NavGroup[] = [
       { label: "Randwick", href: "/wheelchair-taxi-randwick/" },
       { label: "Chatswood", href: "/wheelchair-taxi-chatswood/" },
       { label: "Sydney CBD", href: "/wheelchair-taxi-sydney-cbd/" },
+      { label: "Northern Beaches", href: "/northern-beaches-wheelchair-taxi/" },
     ],
   },
 ];

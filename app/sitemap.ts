@@ -10,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteConfig.url}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${siteConfig.url}/aboutus/`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteConfig.url}/contact-us/`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${siteConfig.url}/northern-beaches-wheelchair-taxi/`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteConfig.url}/blog/`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${siteConfig.url}/privacy-policy/`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${siteConfig.url}/cookie-policy/`, changeFrequency: "yearly", priority: 0.3 },

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { serviceAreas } from "@/lib/homeData";
 
 export default function ServiceAreas() {
@@ -8,7 +9,8 @@ export default function ServiceAreas() {
         <h2>Areas We Service Across Sydney</h2>
         <p style={{ maxWidth: 900 }}>
           Accessible Wheelchair Transport Sydney provides wheelchair accessible transport throughout Sydney, including Sydney CBD, Eastern
-          Suburbs, Western Sydney, Northern Sydney, Southern Sydney, Inner West, Parramatta, Blacktown, Liverpool,
+          Suburbs, Western Sydney, Northern Sydney, the{" "}
+          <Link href="/northern-beaches-wheelchair-taxi/">Northern Beaches</Link>, Southern Sydney, Inner West, Parramatta, Blacktown, Liverpool,
           Penrith, Campbelltown, Bankstown and surrounding Sydney suburbs. We also provide longer-distance wheelchair
           transport depending on passenger requirements and vehicle availability.
         </p>

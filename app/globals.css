@@ -1589,3 +1589,104 @@ img {
   .wt-review-copy p { margin-left: auto; margin-right: auto; }
   .wt-review-btn { justify-content: center; width: 100%; }
 }
+
+/* Northern Beaches regional landing page (app/northern-beaches-wheelchair-taxi) */
+.wt-nb-lede {
+  max-width: 900px;
+}
+.wt-nb-narrow {
+  max-width: 860px;
+}
+.wt-nb-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin-top: 44px;
+}
+.wt-nb-cards a.wt-card,
+.wt-nb-related a.wt-card {
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.wt-nb-cards a.wt-card:hover,
+.wt-nb-related a.wt-card:hover,
+.wt-nb-cards a.wt-card:focus-visible,
+.wt-nb-related a.wt-card:focus-visible {
+  border-color: var(--wt-blue);
+  transform: translateY(-2px);
+}
+.wt-nb-table-wrap {
+  overflow-x: auto;
+  margin: 26px 0 24px;
+  border: 1px solid var(--wt-border);
+  border-radius: var(--wt-radius);
+  background: #fff;
+}
+.wt-nb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.wt-nb-table th,
+.wt-nb-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--wt-border);
+}
+.wt-nb-table tbody tr:last-child th,
+.wt-nb-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.wt-nb-table thead th {
+  background: var(--wt-navy);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.wt-nb-table tbody th {
+  font-family: var(--font-heading);
+  color: var(--wt-navy);
+  white-space: nowrap;
+  width: 1%;
+}
+.wt-nb-notice {
+  background: var(--wt-blue-light);
+  border-left: 4px solid var(--wt-blue);
+  border-radius: 8px;
+  padding: 14px 18px;
+  color: var(--wt-navy);
+}
+.on-light .wt-nb-notice {
+  background: #fff;
+}
+.wt-nb-prose-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+.wt-nb-prose-grid h2 {
+  font-size: 1.45rem;
+}
+.wt-nb-steps {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0 24px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+}
+@media (max-width: 1024px) {
+  .wt-nb-cards { grid-template-columns: repeat(2, 1fr); }
+  .wt-nb-prose-grid { grid-template-columns: 1fr; gap: 12px; }
+  .wt-nb-steps { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .wt-nb-cards { grid-template-columns: 1fr; }
+  .wt-nb-steps { grid-template-columns: 1fr; }
+  .wt-nb-table th,
+  .wt-nb-table td { padding: 12px 14px; }
+  .wt-nb-table tbody th { white-space: normal; width: 38%; }
+}
