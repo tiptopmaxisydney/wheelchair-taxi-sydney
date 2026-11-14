@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
   trailingSlash: true,
@@ -62,4 +63,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Sentry build step (see lib/monitoring.ts). Source maps are only uploaded when
+// SENTRY_AUTH_TOKEN/SENTRY_ORG/SENTRY_PROJECT are set on the build server; without them the
+// build is unchanged apart from the SDK being bundled.
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },
+  telemetry: false,
+  silent: !process.env.CI,
+});
