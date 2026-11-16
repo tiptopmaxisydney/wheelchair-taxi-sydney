@@ -2,6 +2,7 @@
 
 import { Form, FormInstance } from "antd";
 import { IVehicleDetails } from "@/booking-widget/interfaces/createBooking";
+import { computeFare } from "@/booking-widget/utils/fare";
 import { Stop } from "./Step1JourneyDetails";
 
 interface BookingSummaryPanelProps {
@@ -142,6 +143,12 @@ const BookingSummaryPanel: React.FC<BookingSummaryPanelProps> = ({
     ? vehicleInfo.vehicle_id?.image ? process.env.NEXT_PUBLIC_DEV_BUCKET_ROOT + vehicleInfo.vehicle_id.image : null
     : null;
 
+  // Same total as the Confirm step's "Amount details" (shared helper), including the
+  // child seats / capsules / wheelchairs chosen in step 2.
+  const fare = vehicleInfo
+    ? computeFare(vehicleInfo, { isReturnTrip, childSeatCount, childCapsuleCount, wheelchairCount })
+    : null;
+
   const extras = babySeatItems
     ? babySeatItems.map((item) => item.seat_type).filter(Boolean).join(", ")
     : [
@@ -240,6 +247,20 @@ const BookingSummaryPanel: React.FC<BookingSummaryPanelProps> = ({
                   </div>
                 </div>
               </div>
+
+              {fare && (
+                <div className="flex items-center justify-between gap-3 rounded-xl bg-[#0d1b2e] px-3 py-2.5 text-white">
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-semibold uppercase tracking-wider text-white/70">
+                      {isReturnTrip ? "Total fare (both ways)" : "Total fare"}
+                    </div>
+                    <div className="text-[11px] leading-snug text-white/70">Fixed price, incl. GST, tolls &amp; levies</div>
+                  </div>
+                  <div className="text-xl font-bold whitespace-nowrap text-[#1d69b4]">
+                    AUD ${fare.totalAmount.toFixed(2)}
+                  </div>
+                </div>
+              )}
 
               {currentStep >= 3 && (chosen || extras || isAirportPickupBooking || passenger?.notes) && (
                 <div className="flex flex-col gap-1 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600">

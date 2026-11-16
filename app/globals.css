@@ -1701,3 +1701,8 @@ img {
   .wt-nb-table td { padding: 12px 14px; }
   .wt-nb-table tbody th { white-space: normal; width: 38%; }
 }
+
+/* Blog post: booking form directly under the banner - no double section padding before the article. */
+.wt-blog-booking {
+  padding-bottom: 0;
+}

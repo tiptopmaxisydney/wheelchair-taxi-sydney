@@ -1,6 +1,7 @@
 "use client";
 
 import { IVehicleDetails } from "@/booking-widget/interfaces/createBooking";
+import { computeFare } from "@/booking-widget/utils/fare";
 import { Checkbox, Divider, Form, FormInstance } from "antd";
 
 interface Step5ConfirmBookProps {
@@ -36,19 +37,6 @@ const formatDateTime = (value: any, format: string) => {
   return typeof value.format === "function" ? value.format(format) : String(value);
 };
 
-// Mirrors the backend's wheelchair-taxi fare model (see tipopride-backend's
-// computeWheelchairFare in booking.service.ts / pricing.service.ts): 1-3 wheelchairs
-// share one van (bracketFare + $perExtra per chair beyond the first); 4+ requires
-// multiple vans of up to 2 chairs each, each billed at bracketFare + perExtra. Returns
-// just the surcharge on top of the bracket fare, since the bracket fare itself is
-// already counted once in the trip amount.
-const computeWheelchairSurcharge = (bracketFare: number, count: number, perExtra: number): number => {
-  if (!count || count <= 0) return 0;
-  if (count <= 3) return perExtra * (count - 1);
-  const vans = Math.ceil(count / 2);
-  return vans * (bracketFare + perExtra) - bracketFare;
-};
-
 const Step5ConfirmBook: React.FC<Step5ConfirmBookProps> = ({
   form,
   form2,
@@ -66,26 +54,18 @@ const Step5ConfirmBook: React.FC<Step5ConfirmBookProps> = ({
   onOpenTerms,
   onOpenRefund,
 }) => {
-  // Equipment (child seat/baby capsule/wheelchair) is fitted per leg, so a
-  // return trip bills it twice — shown explicitly below rather than silently
-  // doubling the number so the customer can see why.
-  const equipmentLegs = isReturnTrip ? 2 : 1;
-
-  const childSeatAmount = childSeatCount * (vehicleInfo?.child_seat_charges || 0) * equipmentLegs;
-  const childCapsuleAmount = childCapsuleCount * (vehicleInfo?.child_capsule_charges || 0) * equipmentLegs;
-  const wheelchairAmount = vehicleInfo?.is_wheelchair_vehicle
-    ? computeWheelchairSurcharge(vehicleInfo?.distance_fare || 0, wheelchairCount, vehicleInfo?.wheel_chair_charges || 0) * equipmentLegs
-    : wheelchairCount * (vehicleInfo?.wheel_chair_charges || 0) * equipmentLegs;
-  const equipmentAmount = childSeatAmount + childCapsuleAmount + wheelchairAmount;
-  // Wheelchair-taxi fares are all-inclusive: no GST is charged (matches the backend's
-  // is_wheelchair_vehicle handling in pricing.service.ts / booking.service.ts).
-  const gstAmount = vehicleInfo?.is_wheelchair_vehicle
-    ? 0
-    : ((vehicleInfo?.base_fee || 0) + equipmentAmount + (vehicleInfo?.airport_toll || 0)) * (Number(vehicleInfo?.tax_percentage) / 100);
-  const tripAmount = (vehicleInfo?.base_fee || 0) - (vehicleInfo?.toll_charges || 0);
-  // Wheelchair-taxi fares also carry no government levy on top (all-inclusive table fare).
-  const govLevyAmount = vehicleInfo?.is_wheelchair_vehicle ? 0 : (vehicleInfo?.gov_levy || 0);
-  const totalAmount = tripAmount + govLevyAmount + (vehicleInfo?.toll_charges || 0) + (vehicleInfo?.airport_toll || 0) + (vehicleInfo?.surcharge_amount || 0) + gstAmount + equipmentAmount;
+  // Equipment is fitted per leg, so a return trip bills it twice — shown explicitly
+  // below rather than silently doubling the number so the customer can see why.
+  // Same calculation as the "Your transfer" panel (see utils/fare.ts).
+  const {
+    childSeatAmount,
+    childCapsuleAmount,
+    wheelchairAmount,
+    gstAmount,
+    tripAmount,
+    govLevyAmount,
+    totalAmount,
+  } = computeFare(vehicleInfo, { isReturnTrip, childSeatCount, childCapsuleCount, wheelchairCount });
 
   const trip = Form.useWatch([], form) as any;
   const passenger = Form.useWatch([], form2) as any;

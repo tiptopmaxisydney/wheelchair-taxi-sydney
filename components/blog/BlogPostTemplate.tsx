@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import FinalCta from "@/components/home/FinalCta";
+import TiptopBookingWidget from "@/booking-widget/components/TiptopBookingWidget";
 import JsonLd from "@/components/JsonLd";
 import { webPageJsonLd, breadcrumbJsonLd } from "@/lib/jsonld";
 import { siteConfig } from "@/lib/siteConfig";
@@ -34,6 +35,13 @@ export default function BlogPostTemplate({ post }: { post: BlogPost }) {
             <h1>{post.title}</h1>
             <p>{post.excerpt}</p>
           </div>
+        </div>
+      </section>
+
+      {/* Booking form straight after the banner, before the article. */}
+      <section className="wt-section wt-blog-booking">
+        <div className="container">
+          <TiptopBookingWidget />
         </div>
       </section>
 

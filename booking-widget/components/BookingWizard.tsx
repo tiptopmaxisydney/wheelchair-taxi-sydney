@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState, useRef } from "react";
 import { Form, FormInstance } from "antd";
 import { IVehicleDetails, IVehicleTypeOptions } from "@/booking-widget/interfaces/createBooking";
 import { GlobalContext } from "@/booking-widget/context/Provider";
@@ -226,8 +226,27 @@ const BookingWizard: React.FC<BookingWizardProps> = ({
   const isBookDisabled = !isAgreed;
   const showSummary = currentStep === 2 || currentStep === 3;
 
+  // Every step change (Next, Back, or "Edit" in the summary panel) brings the top of the
+  // form back into view — otherwise the guest is left at the bottom of the previous step.
+  // Skipped on first render so the page doesn't jump to the form on load.
+  const wizardRef = useRef<HTMLDivElement>(null);
+  const previousStepRef = useRef(currentStep);
+  useEffect(() => {
+    if (previousStepRef.current === currentStep) return;
+    previousStepRef.current = currentStep;
+    const el = wizardRef.current;
+    if (!el) return;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+  }, [currentStep]);
+
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 md:p-6">
+    <div
+      ref={wizardRef}
+      // Clears the site's sticky header when scrolled to.
+      style={{ scrollMarginTop: 96 }}
+      className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 md:p-6"
+    >
       <StepIndicator currentStep={currentStep} />
 
       {/* Steps 2–3: the step on the left, "Your transfer" (earlier choices) on the right.
