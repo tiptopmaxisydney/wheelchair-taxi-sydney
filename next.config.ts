@@ -63,12 +63,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Sentry build step (see lib/monitoring.ts). Source maps are only uploaded when
-// SENTRY_AUTH_TOKEN/SENTRY_ORG/SENTRY_PROJECT are set on the build server; without them the
-// build is unchanged apart from the SDK being bundled.
+// Sentry build step (see lib/monitoring.ts). Source maps are uploaded (then deleted from the build, so
+// they are never served publicly) only when SENTRY_AUTH_TOKEN is set in this app's .env on the
+// build server: an Organization Auth Token from Sentry > Settings > Developer Settings >
+// Organization Tokens. Without it the build is unchanged apart from the SDK being bundled.
 export default withSentryConfig(nextConfig, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
+  org: process.env.SENTRY_ORG || "tiptopmaxisydney",
+  project: process.env.SENTRY_PROJECT || "wheelchair-taxi-sydney",
   authToken: process.env.SENTRY_AUTH_TOKEN,
   sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },
   telemetry: false,
