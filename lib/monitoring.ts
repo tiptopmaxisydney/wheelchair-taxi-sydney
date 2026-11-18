@@ -13,7 +13,9 @@ const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 export const sentryOptions = {
   dsn,
-  enabled: Boolean(dsn),
+  // Only production builds report. `next dev` on a developer PC (localhost) used to send its
+  // hot-reload and half-loaded-page errors into the same project as real visitors.
+  enabled: Boolean(dsn) && process.env.NODE_ENV === "production",
   environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || "production",
   // Free plan: errors only. Performance tracing and session replay draw on separate quotas
   // (and replay would record customers filling in booking forms), so both stay off.
@@ -30,4 +32,14 @@ export const sentryOptions = {
     genAI: { inputs: false, outputs: false },
   },
   initialScope: { tags: { site: SITE_KEY } },
+  ignoreErrors: [
+    // Visitor left / bot cut the connection while React streamed the page (RSC "Connection closed.",
+    // Node "destination stream closed early"). The page itself is fine.
+    /^Connection closed\.?$/,
+    /The destination stream closed early/,
+    // Next.js router rejects with this when a newer navigation starts before the last one finished.
+    /Route change cancelled/,
+    // Microsoft Safe Links / Defender scanner's own injected script (see Outlook email links).
+    /Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+/,
+  ],
 } satisfies BrowserOptions;
